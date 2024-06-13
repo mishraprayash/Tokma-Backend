@@ -21,7 +21,7 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
             width: mq.width * .02,
           ),
           SizedBox(
-            width: mq.width * 0.76,
+            width: mq.width * 0.86,
             height: mq.height * 0.05,
             child: TextField(
               decoration: InputDecoration(
@@ -40,11 +40,6 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
           ),
           SizedBox(
             width: mq.width * .02,
-          ),
-          CircleAvatar(
-            backgroundImage: AssetImage(
-              'assets/tokma.png',
-            ),
           ),
         ],
         iconTheme: const IconThemeData(color: Colors.white),

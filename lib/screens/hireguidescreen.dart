@@ -126,36 +126,38 @@ class _HireGuideScreenState extends State<HireGuideScreen> {
                       border: Border.all(color: Colors.grey),
                       borderRadius: BorderRadius.circular(8.0),
                     ),
-                    child: Column(
-                      children: [
-                        CircleAvatar(
-                          radius: 30,
-                          backgroundColor: Colors.grey[300],
-                          child: const Icon(Icons.person,
-                              size: 30, color: Colors.grey),
-                        ),
-                        const SizedBox(height: 8.0),
-                        ElevatedButton(
-                          onPressed: () {},
-                          child: const Text("Hire Me"),
-                        ),
-                        const SizedBox(height: 16.0),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Name: ${guide.name}",
-                              style: const TextStyle(fontSize: 16.0)),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Age: ${guide.age}",
-                              style: const TextStyle(fontSize: 16.0)),
-                        ),
-                        Align(
-                          alignment: Alignment.centerLeft,
-                          child: Text("Total Guides: ${guide.totalGuides}",
-                              style: const TextStyle(fontSize: 16.0)),
-                        ),
-                      ],
+                    child: SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          CircleAvatar(
+                            radius: 30,
+                            backgroundColor: Colors.grey[300],
+                            child: const Icon(Icons.person,
+                                size: 30, color: Colors.grey),
+                          ),
+                          const SizedBox(height: 8.0),
+                          ElevatedButton(
+                            onPressed: () {},
+                            child: const Text("Hire Me"),
+                          ),
+                          const SizedBox(height: 16.0),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Name: ${guide.name}",
+                                style: const TextStyle(fontSize: 16.0)),
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Age: ${guide.age}",
+                                style: const TextStyle(fontSize: 16.0)),
+                          ),
+                          Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text("Total Guides: ${guide.totalGuides}",
+                                style: const TextStyle(fontSize: 16.0)),
+                          ),
+                        ],
+                      ),
                     ),
                   );
                 },

@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:yatri/main.dart';
 import 'package:yatri/screens/signupscreenforlocalguide.dart';
 import 'package:yatri/screens/signupscreenfortourist.dart';
 
@@ -13,6 +14,26 @@ class SignUpScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            SizedBox(
+              height: mq.height * .125,
+              child: Transform.scale(
+                scale: 1.5,
+                child: Image.asset(
+                  'assets/tokma.png',
+                  fit: BoxFit.contain,
+                ),
+              ),
+            ),
+            const SizedBox(height: 30),
+            Text(
+              "\"Travel Smart, Travel Safe\"",
+              style: TextStyle(
+                fontSize: 24.0,
+                color: Color(0xFFA1662f),
+              ),
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 35),
             TextButton(
               style: TextButton.styleFrom(
                 padding:

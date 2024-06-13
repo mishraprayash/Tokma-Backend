@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:yatri/database/db_handler.dart';
 import 'package:yatri/main.dart';
 import 'package:yatri/screens/homescreenfortourist.dart';
-import 'package:yatri/screens/loginscreen.dart';
+import 'package:yatri/screens/signupscreen.dart';
 
 // This is the splash screen widget which appears when the app is launched
 class SplashScreen extends StatefulWidget {
@@ -32,7 +32,7 @@ class _SplashScreenState extends State<SplashScreen> {
       } else {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const LoginScreen()),
+          MaterialPageRoute(builder: (_) => const SignUpScreen()),
         );
       }
     });

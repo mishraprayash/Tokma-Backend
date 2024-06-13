@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:yatri/main.dart';
 
 class LoginScreen extends StatefulWidget {
   const LoginScreen({Key? key}) : super(key: key);
@@ -21,100 +22,102 @@ class _LoginScreenState extends State<LoginScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Form(
-          key: _formKey,
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: <Widget>[
-              const Icon(
-                Icons.supervised_user_circle_outlined,
-                size: 120,
-                color: Color(0xFFA1662f),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: _emailController,
-                decoration: InputDecoration(
-                  labelText: 'Email',
-                  border: OutlineInputBorder(),
+      body: SingleChildScrollView(
+        child: Padding(
+          padding: const EdgeInsets.only(top: 80, left: 16, right: 16),
+          child: Form(
+            key: _formKey,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: <Widget>[
+                const Icon(
+                  Icons.supervised_user_circle_outlined,
+                  size: 120,
+                  color: Color(0xFFA1662f),
                 ),
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your email';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 12),
-              TextFormField(
-                controller: _passwordController,
-                decoration: InputDecoration(
-                  labelText: 'Password',
-                  border: OutlineInputBorder(),
-                ),
-                obscureText: true,
-                validator: (value) {
-                  if (value == null || value.isEmpty) {
-                    return 'Please enter your password';
-                  }
-                  return null;
-                },
-              ),
-              SizedBox(height: 20),
-              DropdownButtonFormField<String>(
-                value: _userType,
-                onChanged: (String? newValue) {
-                  setState(() {
-                    _userType = newValue!;
-                  });
-                },
-                items: <String>['Tourist', 'Local Guide']
-                    .map<DropdownMenuItem<String>>((String value) {
-                  return DropdownMenuItem<String>(
-                    value: value,
-                    child: Text(value),
-                  );
-                }).toList(),
-                decoration: InputDecoration(
-                  labelText: 'User Type',
-                  border: OutlineInputBorder(),
-                ),
-              ),
-              SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () {
-                  if (_formKey.currentState!.validate()) {
-                    _handleLogin();
-                  }
-                },
-                child: Text('Login as $_userType'),
-              ),
-              const SizedBox(height: 15),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 15),
-                child: RichText(
-                    text: TextSpan(children: [
-                  const TextSpan(
-                    text: "Don't have an account? ",
-                    style: TextStyle(color: Colors.black, fontSize: 20),
+                const SizedBox(height: 20),
+                DropdownButtonFormField<String>(
+                  value: _userType,
+                  onChanged: (String? newValue) {
+                    setState(() {
+                      _userType = newValue!;
+                    });
+                  },
+                  items: <String>['Tourist', 'Local Guide']
+                      .map<DropdownMenuItem<String>>((String value) {
+                    return DropdownMenuItem<String>(
+                      value: value,
+                      child: Text(value),
+                    );
+                  }).toList(),
+                  decoration: InputDecoration(
+                    labelText: 'User Type',
+                    border: OutlineInputBorder(),
                   ),
-                  TextSpan(
-                    text: "Sign Up Here",
-                    style: const TextStyle(
-                      color: Color(0xFFA1662f),
-                      fontSize: 20,
+                ),
+                const SizedBox(height: 12),
+                TextFormField(
+                  controller: _emailController,
+                  decoration: InputDecoration(
+                    labelText: 'Email',
+                    border: OutlineInputBorder(),
+                  ),
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your email';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 12),
+                TextFormField(
+                  controller: _passwordController,
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    border: OutlineInputBorder(),
+                  ),
+                  obscureText: true,
+                  validator: (value) {
+                    if (value == null || value.isEmpty) {
+                      return 'Please enter your password';
+                    }
+                    return null;
+                  },
+                ),
+                SizedBox(height: 20),
+                ElevatedButton(
+                  onPressed: () {
+                    if (_formKey.currentState!.validate()) {
+                      _handleLogin();
+                    }
+                  },
+                  child: Text('Login as $_userType'),
+                ),
+                const SizedBox(height: 15),
+                Padding(
+                  padding: EdgeInsets.symmetric(horizontal: mq.height * 0.055),
+                  child: RichText(
+                      text: TextSpan(children: [
+                    const TextSpan(
+                      text: "Don't have an account? ",
+                      style: TextStyle(color: Colors.black, fontSize: 16),
                     ),
-                    recognizer: TapGestureRecognizer()
-                      ..onTap = () {
-                        Navigator.pushNamed(context, '/signup');
-                      },
-                  ),
-                ])),
-              )
-            ],
+                    TextSpan(
+                      text: "Sign Up Here",
+                      style: const TextStyle(
+                        color: Color(0xFFA1662f),
+                        fontSize: 16,
+                      ),
+                      recognizer: TapGestureRecognizer()
+                        ..onTap = () {
+                          Navigator.pushNamed(context, '/signup');
+                        },
+                    ),
+                  ])),
+                )
+              ],
+            ),
           ),
         ),
       ),

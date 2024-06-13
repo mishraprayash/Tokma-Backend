@@ -18,8 +18,6 @@ class _SignUpScreenForLocalGuideState extends State<SignUpScreenForLocalGuide> {
   final TextEditingController _contactNoController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  // final TextEditingController _confirmPasswordController =
-  //     TextEditingController();
   final TextEditingController _districtController = TextEditingController();
   final TextEditingController _placeNameController = TextEditingController();
   String? _genderValue;
@@ -114,15 +112,6 @@ class _SignUpScreenForLocalGuideState extends State<SignUpScreenForLocalGuide> {
                 obscureText: true,
               ),
               const SizedBox(height: 10),
-              // TextField(
-              //   controller: _confirmPasswordController,
-              //   decoration: const InputDecoration(
-              //     labelText: 'Confirm Password',
-              //     border: OutlineInputBorder(),
-              //   ),
-              //   obscureText: true,
-              // ),
-              // const SizedBox(height: 20),
               const Text('Place that you want to be guide of'),
               const SizedBox(height: 10),
               DropdownButtonFormField<String>(
@@ -230,9 +219,11 @@ class _SignUpScreenForLocalGuideState extends State<SignUpScreenForLocalGuide> {
       'gender': _genderValue,
       'age': int.parse(_ageController.text),
       'password': _passwordController.text,
-      'province': _provinceValue,
-      'district': _districtController.text,
-      'placeName': _placeNameController.text,
+      'location': {
+        'province': _provinceValue,
+        'district': _districtController.text,
+        'placeName': _placeNameController.text,
+      },
     };
 
     try {
@@ -244,7 +235,7 @@ class _SignUpScreenForLocalGuideState extends State<SignUpScreenForLocalGuide> {
         body: jsonEncode(userData),
       );
 
-      if (response.statusCode == 200) {
+      if (response.statusCode == 201) {
         Navigator.pushNamed(context, '/login');
       } else {
         ScaffoldMessenger.of(context).showSnackBar(

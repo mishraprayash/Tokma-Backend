@@ -30,8 +30,6 @@ class _SideMenuListState extends State<SideMenuList> {
   }
 
   void _logout() {
-    // Mock logout logic: clear session data, etc.
-    // For example: SharedPreferences.clear(), API call to logout, etc.
     print("User logged out");
   }
 
