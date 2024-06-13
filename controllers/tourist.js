@@ -1,4 +1,4 @@
-import Tourist from "../models/tourist.js";
+import Tourist from "../models/touristModel.js";
 
 export const register = async (req, res, next) => {
     try {

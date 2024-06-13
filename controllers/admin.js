@@ -1,7 +1,7 @@
 import bcrypt from "bcryptjs"
-import Admin from "../models/admin.js"
-import Guide from "../models/guide.js"
-import Tourist from "../models/tourist.js"
+import Admin from "../models/adminModel.js"
+import Guide from "../models/guideModel.js"
+import Tourist from "../models/touristModel.js"
 import mongoose from "mongoose"
 
 // register 

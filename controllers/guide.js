@@ -1,7 +1,7 @@
 import mongoose from "mongoose"
-import Guide from "../models/guide.js"
+import Guide from "../models/guideModel.js"
 import bcrypt from "bcryptjs"
-import Tourist from "../models/tourist.js";
+import Tourist from "../models/touristModel.js";
 
 export const register = async (req, res, next) => {
     const { name, contactNo, gender, age, location, email, password } = req.body;

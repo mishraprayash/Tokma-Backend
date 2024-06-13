@@ -6,8 +6,9 @@ export default async function connectDB() {
             throw new Error('Database connection string is not provided.');
         }
         await mongoose.connect(process.env.DATABASE_REMOTE, {
-            dbName: "Hackathon"
-        });
+            tls:true,
+            connectTimeoutMS:20000
+        }, );
 
         mongoose.connection.on('error', (err) => {
             console.error('MongoDB connection error:', err);
