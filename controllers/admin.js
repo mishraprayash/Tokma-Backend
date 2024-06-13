@@ -20,7 +20,7 @@ export const register = async (req, res, next) => {
             username, email,
             password: hashedPassword
         })
-        return res.json({ message: 'Register Sucess', admin })
+        return res.status(201).json({ message: 'Register Sucess', admin })
     } catch (error) {
         console.log(error);
         res.status(500).json({ error })
@@ -99,6 +99,28 @@ export const rejectGuide = async (req, res, next) => {
         return res.status(500).json({ error });
     }
 }
+
+export const approveHealthService = async (req, res, next) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(404).json({ message: "Invalid ID format" });
+        }
+        const id = new mongoose.Types.ObjectId(id);
+        const healthService = await healthServiceModel.findById(id);
+        if (!healthService) {
+            return res.status(400).json({ message: "Service doesnot exists" })
+        }
+        await Guide.deleteOne(id);
+        return res.status(200).json({ message: 'Guide Rejected' })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error });
+    }
+}
+
+
+
+
 
 
 // fetchDashboardInfo

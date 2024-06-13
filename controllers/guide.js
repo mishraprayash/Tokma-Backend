@@ -61,40 +61,42 @@ export const fetchDashboardInfo = async (req, res, next) => {
 }
 
 
+
+
 // accept the hire request from the tourist
-export const acceptOffer = async (req, res, next) => {
-    try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(404).json({ message: "Invalid ID Format" })
-        }
-        // this is the guide id
-        const guide = await Guide.findById(req.user.id)
+// export const acceptOffer = async (req, res, next) => {
+//     try {
+//         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+//             return res.status(404).json({ message: "Invalid ID Format" })
+//         }
+//         // this is the guide id
+//         const guide = await Guide.findById(req.user.id)
 
-        // this is the id of the tourist who have request to hire the guide
-        const id = new mongoose.Types.ObjectId(req.params.id)
+//         // this is the id of the tourist who have request to hire the guide
+//         const id = new mongoose.Types.ObjectId(req.params.id)
 
-        // ensuring if the tourist exist
-        const touristExist = await Tourist.findById(id)
-        if (!touristExist) {
-            return res.status(404).json({ message: "Tourist doesnot exist" })
-        }
-        // changing guide status
-        guide.hiringInfo.isHired = true
-        // adding tourist info to guide hiringInfo
-        guide.hiringInfo.hiringTourist = id
+//         // ensuring if the tourist exist
+//         const touristExist = await Tourist.findById(id)
+//         if (!touristExist) {
+//             return res.status(404).json({ message: "Tourist doesnot exist" })
+//         }
+//         // changing guide status
+//         guide.hiringInfo.isHired = true
+//         // adding tourist info to guide hiringInfo
+//         guide.hiringInfo.hiringTourist = id
 
-        // updating tourist model for hiring process
-        touristExist.guideRequests.status = 'hired'
-        touristExist.guideRequests.hiredGuide = guide._id
-        await guide.save()
-        await touristExist.save()
+//         // updating tourist model for hiring process
+//         touristExist.guideRequests.status = 'hired'
+//         touristExist.guideRequests.hiredGuide = guide._id
+//         await guide.save()
+//         await touristExist.save()
 
-        return res.status(200).json({ message: "Accepted Offer" })
+//         return res.status(200).json({ message: "Accepted Offer" })
 
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error })
-    }
-}
+//     } catch (error) {
+//         console.log(error);
+//         return res.status(500).json({ error })
+//     }
+// }
 
 
