@@ -1,28 +1,39 @@
 import express from "express"
 import connectDB from "./config/dbconfig.js"
-import {config} from "dotenv"
+import { config } from "dotenv"
+import cors from "cors"
+import cookieParser from "cookie-parser"
 
 import guideRoutes from "./routes/guideRoutes.js"
 import adminRoutes from "./routes/adminRoutes.js"
 import touristRoutes from "./routes/adminRoutes.js"
+import notFoundMiddleware from "./middleware/not-found.js"
 
+// dotenv configuration
 config();
 
+// create an instance of express app
 const app = express();
+
+// middlewares
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+app.use(cors())
+app.use(cookieParser())
 
-app.use('/api/guide',guideRoutes);
-app.use('/api/admin',adminRoutes);
-app.use('/api/tourist',touristRoutes);
+// routes
+app.use('/api/guide', guideRoutes);
+app.use('/api/admin', adminRoutes);
+app.use('/api/tourist', touristRoutes);
 
 const PORT = process.env.PORT || 3001
 
 
-
-app.get('/',(req,res)=>{
-    return res.json({message:"Server is working..."})
+app.get('/', (req, res) => {
+    return res.json({ message: "Server is working..." })
 })
+
+app.use(notFoundMiddleware);
 
 const startServer = async () => {
     try {
@@ -35,4 +46,6 @@ const startServer = async () => {
         console.log(`Error occured:- ${error}`);
     }
 }
+
+// start the server
 startServer()

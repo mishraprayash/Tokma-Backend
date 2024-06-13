@@ -10,7 +10,11 @@ const emergencyContactInfoSchema = new mongoose.Schema({
 }, { _id: false })
 
 const touristSchema = new mongoose.Schema({
-    name: {
+    firstName: {
+        type: String,
+        required: true
+    },
+    lastName: {
         type: String,
         required: true
     },
