@@ -67,5 +67,6 @@ guideSchema.methods.createJWT = function () {
 guideSchema.methods.matchPassword = async function(enteredPassword){
     return await bcrypt.compare(enteredPassword, this.password);
 }
+
 const Guide = mongoose.model('Guide', guideSchema);
 export default Guide;
