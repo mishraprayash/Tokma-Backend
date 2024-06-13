@@ -13,13 +13,15 @@ class _SideMenuListState extends State<SideMenuList> {
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
     return Scaffold(
-      backgroundColor: const Color(0xFF1a6b9c),
+      backgroundColor: const Color(0xFFA1662f),
       body: ListView(
         children: [
           _buildMenuItem(Icons.home, 'Home', '/home'),
           _buildMenuItem(Icons.food_bank_sharp, 'Food & Lodge', '/foodlodge'),
           _buildMenuItem(Icons.emergency, 'Emergency', '/emergency'),
           _buildMenuItem(Icons.person, 'Hire Guide', '/hireguide'),
+          _buildMenuItem(
+              Icons.health_and_safety, 'Health Services', '/healthservices'),
           _buildMenuItem(Icons.settings, 'Settings', '/settings'),
           _buildMenuItem(Icons.logout, 'Logout', '/login', isLogout: true),
         ],

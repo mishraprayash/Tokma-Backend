@@ -1,142 +1,158 @@
+import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
-import 'package:yatri/main.dart';
-import 'package:yatri/screens/homescreen.dart';
-
-TextStyle mystyle = const TextStyle(fontSize: 25);
+import 'package:http/http.dart' as http;
 
 class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+  const LoginScreen({Key? key}) : super(key: key);
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  _LoginScreenState createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
-  String email = "";
-  String password = "";
+  final TextEditingController _emailController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  String _userType = 'Tourist';
+
+  // Form key for validation
+  final _formKey = GlobalKey<FormState>();
 
   @override
   Widget build(BuildContext context) {
-    // Initializing media query for getting device screen size
-    mq = MediaQuery.of(context).size;
-    final emailfield = TextField(
-      onChanged: (val) {
-        setState(() {
-          email = val;
-        });
-      },
-      style: mystyle,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.all(10),
-        hintText: "Email",
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32.0),
-        ),
-      ),
-    );
-    final passwordfield = TextField(
-      onChanged: (val) {
-        setState(() {
-          password = val;
-        });
-      },
-      obscureText: true,
-      style: mystyle,
-      decoration: InputDecoration(
-        contentPadding: const EdgeInsets.all(10),
-        hintText: "Password",
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(32.0),
-        ),
-      ),
-    );
-    final myLoginButton = Material(
-      elevation: 5.0,
-      borderRadius: BorderRadius.circular(30.0),
-      color: const Color(0xFF1a6b9c),
-      child: MaterialButton(
-        minWidth: MediaQuery.of(context).size.width,
-        padding: const EdgeInsets.all(20),
-        onPressed: () {
-          if (email == "nilu@gmail.com" && password == "ilu") {
-            Navigator.push(
-              context,
-              MaterialPageRoute(
-                builder: (context) => const HomeScreen(),
-              ),
-            );
-          } else {
-            print("Login Failed");
-          }
-        },
-        child: const Text(
-          "Login",
-          style: TextStyle(color: Colors.white, fontSize: 25),
-        ),
-      ),
-    );
     return Scaffold(
-      body: Center(
-        child: Container(
-          color: Colors.white,
-          child: Padding(
-              padding: const EdgeInsets.all(20),
-              child: ListView(
-                children: [
-                  Column(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    crossAxisAlignment: CrossAxisAlignment.center,
-                    children: [
-                      const SizedBox(
-                        height: 50,
-                      ),
-                      const Icon(
-                        Icons.supervised_user_circle_outlined,
-                        size: 120,
-                        color: Color(0xFF1a6b9c),
-                      ),
-                      const SizedBox(
-                        height: 30,
-                      ),
-                      emailfield,
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      passwordfield,
-                      const SizedBox(
-                        height: 20,
-                      ),
-                      myLoginButton,
-                      SizedBox(
-                        height: mq.height * 0.025,
-                      ),
-                      RichText(
-                        text: TextSpan(
-                          children: [
-                            const TextSpan(
-                              text: "Don't have account? ",
-                              style:
-                                  TextStyle(color: Colors.black, fontSize: 20),
-                            ),
-                            TextSpan(
-                              text: "Sign Up Here",
-                              style: const TextStyle(
-                                  color: Color(0xFF1a6b9c), fontSize: 20),
-                              recognizer: TapGestureRecognizer()
-                                ..onTap = () {
-                                  Navigator.pushNamed(context, '/signup');
-                                },
-                            ),
-                          ],
-                        ),
-                      ),
-                    ],
+      body: Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              const Icon(
+                Icons.supervised_user_circle_outlined,
+                size: 120,
+                color: Color(0xFFA1662f),
+              ),
+              const SizedBox(height: 20),
+              TextFormField(
+                controller: _emailController,
+                decoration: InputDecoration(
+                  labelText: 'Email',
+                  border: OutlineInputBorder(),
+                ),
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your email';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 12),
+              TextFormField(
+                controller: _passwordController,
+                decoration: InputDecoration(
+                  labelText: 'Password',
+                  border: OutlineInputBorder(),
+                ),
+                obscureText: true,
+                validator: (value) {
+                  if (value == null || value.isEmpty) {
+                    return 'Please enter your password';
+                  }
+                  return null;
+                },
+              ),
+              SizedBox(height: 20),
+              DropdownButtonFormField<String>(
+                value: _userType,
+                onChanged: (String? newValue) {
+                  setState(() {
+                    _userType = newValue!;
+                  });
+                },
+                items: <String>['Tourist', 'Local Guide']
+                    .map<DropdownMenuItem<String>>((String value) {
+                  return DropdownMenuItem<String>(
+                    value: value,
+                    child: Text(value),
+                  );
+                }).toList(),
+                decoration: InputDecoration(
+                  labelText: 'User Type',
+                  border: OutlineInputBorder(),
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton(
+                onPressed: () {
+                  if (_formKey.currentState!.validate()) {
+                    _handleLogin();
+                  }
+                },
+                child: Text('Login as $_userType'),
+              ),
+              const SizedBox(height: 15),
+              Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 15),
+                child: RichText(
+                    text: TextSpan(children: [
+                  const TextSpan(
+                    text: "Don't have an account? ",
+                    style: TextStyle(color: Colors.black, fontSize: 20),
                   ),
-                ],
-              )),
+                  TextSpan(
+                    text: "Sign Up Here",
+                    style: const TextStyle(
+                      color: Color(0xFFA1662f),
+                      fontSize: 20,
+                    ),
+                    recognizer: TapGestureRecognizer()
+                      ..onTap = () {
+                        Navigator.pushNamed(context, '/signup');
+                      },
+                  ),
+                ])),
+              )
+            ],
+          ),
         ),
       ),
     );
+  }
+
+  void _handleLogin() async {
+    String url = _userType == 'Tourist'
+        ? 'https://tokma.onrender.com/api/tourist/login'
+        : 'https://tokma.onrender.com/api/guide/login';
+
+    Map<String, String> credentials = {
+      'email': _emailController.text,
+      'password': _passwordController.text,
+    };
+
+    try {
+      var response = await http.post(
+        Uri.parse(url),
+        headers: <String, String>{
+          'Content-Type': 'application/json; charset=UTF-8',
+        },
+        body: jsonEncode(credentials),
+      );
+
+      if (response.statusCode == 200) {
+        Navigator.pushReplacementNamed(context,
+            _userType == 'Tourist' ? '/homefortourist' : '/homeforlocalguide');
+      } else {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Login Failed: ${response.body}')),
+        );
+      }
+    } catch (e) {
+      print('Error: $e');
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text('Error: $e')),
+      );
+    }
   }
 }

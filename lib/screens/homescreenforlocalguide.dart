@@ -2,14 +2,15 @@ import 'package:flutter/material.dart';
 import 'package:yatri/Widget/sidemenulist.dart';
 import 'package:yatri/main.dart';
 
-class HomeScreen extends StatefulWidget {
-  const HomeScreen({super.key});
+class HomeScreenForLocalGuide extends StatefulWidget {
+  const HomeScreenForLocalGuide({super.key});
 
   @override
-  State<HomeScreen> createState() => _HomeScreenState();
+  State<HomeScreenForLocalGuide> createState() =>
+      _HomeScreenForLocalGuideState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenForLocalGuideState extends State<HomeScreenForLocalGuide> {
   @override
   Widget build(BuildContext context) {
     // Initializing media query for getting device screen size
@@ -21,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
             width: mq.width * .02,
           ),
           SizedBox(
-            width: mq.width * 0.80,
+            width: mq.width * 0.76,
             height: mq.height * 0.05,
             child: TextField(
               decoration: InputDecoration(
@@ -41,12 +42,11 @@ class _HomeScreenState extends State<HomeScreen> {
           SizedBox(
             width: mq.width * .02,
           ),
-          const Icon(Icons.home)
-          // Image.asset(
-          //   'assets/splash.png',
-          //   width: mq.width * 0.2,
-          //   height: mq.height * 0.2,
-          // )
+          CircleAvatar(
+            backgroundImage: AssetImage(
+              'assets/tokma.png',
+            ),
+          ),
         ],
         iconTheme: const IconThemeData(color: Colors.white),
       ),
@@ -64,7 +64,7 @@ class _HomeScreenState extends State<HomeScreen> {
             color: Colors.lightBlue[100],
             padding: const EdgeInsets.all(7.0),
             child: const Text(
-              "\"Travel Smart, Travel Safe\"",
+              "\"Serve\"",
               style: TextStyle(
                 fontSize: 24.0,
                 color: Colors.black,
