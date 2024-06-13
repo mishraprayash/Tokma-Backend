@@ -7,7 +7,7 @@ import cookieParser from "cookie-parser"
 import guideRoutes from "./routes/guideRoutes.js"
 import adminRoutes from "./routes/adminRoutes.js"
 import touristRoutes from "./routes/adminRoutes.js"
-import healthServiceRoutes from "./routes/heathServiceRoutes.js"
+import healthServiceRoutes from "./routes/healthServiceRoutes.js"
 import notFoundMiddleware from "./middleware/not-found.js"
 
 // dotenv configuration
@@ -26,7 +26,7 @@ app.use(cookieParser())
 app.use('/api/guide', guideRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/tourist', touristRoutes);
-app.use('/api/healthservice', )
+app.use('/api/healthservice', healthServiceRoutes)
 
 const PORT = process.env.PORT || 3001
 
