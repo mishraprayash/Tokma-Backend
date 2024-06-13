@@ -1,6 +1,7 @@
 
 import mongoose from "mongoose";
 import jwt from "jsonwebtoken";
+import bcrypt from "bcryptjs";
 
 const adminSchema = new mongoose.Schema({
     username: {
@@ -29,8 +30,9 @@ adminSchema.methods.createJWT = function () {
         { expiresIn: process.env.JWT_LIFETIME }
     )
 }
-
-
+adminSchema.methods.matchPassword = async function(enteredPassword){
+    return await bcrypt.compare(enteredPassword, this.password);
+}
 
 const Admin = mongoose.model('Admin', adminSchema);
 export default Admin;

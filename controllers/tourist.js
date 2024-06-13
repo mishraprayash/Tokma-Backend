@@ -23,7 +23,7 @@ export const login = async (req, res, next) => {
             return res.json({ message: "Missing informations" });
         }
        
-        return res.json({ tourist });
+        return res.json({  });
     } catch (error) {
         console.log(error);
         res.status(500).json({ error });

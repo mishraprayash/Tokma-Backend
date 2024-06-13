@@ -1,3 +1,4 @@
+import bcrypt from "bcryptjs"
 import Admin from "../models/admin.js"
 import Guide from "../models/guide.js"
 import Tourist from "../models/tourist.js"
@@ -14,8 +15,10 @@ export const register = async (req, res, next) => {
         if (user) {
             return res.json({ message: "User already exists" })
         }
+        const hashedPassword = await bcrypt.hash(password, 10);
         const admin = await Admin.create({
-            username, email, password
+            username, email,
+            password: hashedPassword
         })
         return res.json({ message: 'Register Sucess', admin })
     } catch (error) {
@@ -31,16 +34,17 @@ export const login = async (req, res, next) => {
         if (!email || !password) {
             return res.json({ message: "Missing information" });
         }
-        const user = await Admin.findOne({ email });
-        if (!user) {
+        const admin = await Admin.findOne({ email });
+        if (!admin) {
             return res.json({ message: "User doesnot exists" });
         }
-        const isPasswordMatched = (user.password === password);
+        const isPasswordMatched = await admin.matchPassword(password);
+
         if (!isPasswordMatched) {
             return res.json({ message: "User doesnot exist" });
         }
         // remaining to handle create session here 
-        const token = user.createJWT();
+        const token = admin.createJWT();
         res.cookie('token', token, {
             httpOnly: true,
             secure: false,
@@ -59,7 +63,7 @@ export const login = async (req, res, next) => {
 export const approveGuide = async (req, res, next) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({ message: "Invalid ID format" });
+            return res.status(404).json({ message: "Invalid ID format" });
         }
         const id = new mongoose.Types.ObjectId(req.params.id);
         const guide = await Guide.findById(id);
@@ -79,10 +83,11 @@ export const approveGuide = async (req, res, next) => {
 // reject guide
 export const rejectGuide = async (req, res, next) => {
     try {
+
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(400).json({ message: "Invalid ID format" });
+            return res.status(404).json({ message: "Invalid ID format" });
         }
-        const id = new mongoose.Types.ObjectId(req.params.id);
+        const id = new mongoose.Types.ObjectId(id);
         const guide = await Guide.findById(id);
         if (!guide) {
             return res.status(400).json({ message: "User doesnot exists" })
@@ -95,23 +100,12 @@ export const rejectGuide = async (req, res, next) => {
     }
 }
 
-// logout
-export const logout = async (req, res, next) => {
-    try {
-        // remove the existing cookies or session
-        res.clearCookie('token')
-        return res.status(200).json({ message: 'Logout Success' })
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({ error });
-    }
-}
 
 // fetchDashboardInfo
 export const fetchDashboardInfo = async (req, res, next) => {
     try {
         const pendingGuides = await Guide.find({ isApproved: false })
-        const guideCount = await Guide.countDocuments()
+        const guideCount = await Guide.countDocuments({ isApproved: true })
         const touristCount = await Tourist.countDocuments()
         return res.status(200).json({
             guides: pendingGuides,

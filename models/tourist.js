@@ -1,4 +1,6 @@
-import mongoose from "mongoose";
+import mongoose from "mongoose"
+import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken"
 
 const emergencyContactInfoSchema = new mongoose.Schema({
     phoneNo: {
@@ -45,8 +47,31 @@ const touristSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    guideRequests: [{
+        hasHired: {
+            type: Boolean,
+            default: false
+        },
+        hiredGuide: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'Guide'
+        }
+    }],
     emergencyContactInfoSchema
 })
+
+
+touristSchema.methods.createJWT = function () {
+    return jwt.sign(
+        { id: this._id, email: this.email, role: this.role },
+        process.env.JWT_SECRET,
+        { expiresIn: process.env.JWT_LIFETIME }
+    )
+}
+
+touristSchema.methods.matchPassword = async function (enteredPassword) {
+    return await bcrypt.compare(enteredPassword, this.password);
+}
 
 const Tourist = mongoose.model('Tourist', touristSchema);
 export default Tourist;
