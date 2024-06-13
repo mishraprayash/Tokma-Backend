@@ -47,16 +47,6 @@ const touristSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    guideRequests: [{
-        hasHired: {
-            type: Boolean,
-            default: false
-        },
-        hiredGuide: {
-            type: mongoose.SchemaTypes.ObjectId,
-            ref: 'Guide'
-        }
-    }],
     emergencyContactInfoSchema
 })
 

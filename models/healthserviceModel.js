@@ -45,6 +45,5 @@ const healthServiceSchema = new mongoose.Schema({
     }
 })
 
-
 const healthService = mongoose.model('healthService', healthServiceSchema);
 export default healthService;

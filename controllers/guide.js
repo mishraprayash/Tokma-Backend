@@ -46,7 +46,7 @@ export const login = async (req, res, next) => {
     if (!guide) {
       return res.json({ message: "User doesnot exists" });
     }
-    const isPasswordMatched = await guide.matchPassoword(password);
+    const isPasswordMatched = await guide.matchPassword(password);
     if (!isPasswordMatched) {
       return res.json({ message: "User doesnot exist" });
     }
@@ -66,42 +66,26 @@ export const login = async (req, res, next) => {
 
 export const fetchDashboardInfo = async (req, res, next) => {
   try {
-    const guide = await Guide.findById(req.user.id);
-  } catch (error) {}
+    const guide = await Guide.findById(
+      { id: req.user.id },
+      { password: false }
+    );
+    return res.status(200).json({ guide });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error });
+  }
 };
 
-// accept the hire request from the tourist
-// export const acceptOffer = async (req, res, next) => {
-//     try {
-//         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-//             return res.status(404).json({ message: "Invalid ID Format" })
-//         }
-//         // this is the guide id
-//         const guide = await Guide.findById(req.user.id)
-
-//         // this is the id of the tourist who have request to hire the guide
-//         const id = new mongoose.Types.ObjectId(req.params.id)
-
-//         // ensuring if the tourist exist
-//         const touristExist = await Tourist.findById(id)
-//         if (!touristExist) {
-//             return res.status(404).json({ message: "Tourist doesnot exist" })
-//         }
-//         // changing guide status
-//         guide.hiringInfo.isHired = true
-//         // adding tourist info to guide hiringInfo
-//         guide.hiringInfo.hiringTourist = id
-
-//         // updating tourist model for hiring process
-//         touristExist.guideRequests.status = 'hired'
-//         touristExist.guideRequests.hiredGuide = guide._id
-//         await guide.save()
-//         await touristExist.save()
-
-//         return res.status(200).json({ message: "Accepted Offer" })
-
-//     } catch (error) {
-//         console.log(error);
-//         return res.status(500).json({ error })
-//     }
-// }
+export const updateAvailability = async (req, res, next) => {
+  try {
+    const guide = await Guide.findById(req.user.id);
+    const approveStatus = guide.isApproved;
+    guide.isApproved = !approveStatus;
+    await guide.save();
+    return res.status(200).json({ message: "Availability Updated" });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error });
+  }
+};
