@@ -42,18 +42,9 @@ const guideSchema = new mongoose.Schema({
         type: String,
         default: 'guide'
     },
-    hiringInfo: {
-        isHired: {
-            type: Boolean,
-            default: false
-        },
-        hiringTourist: {
-            type: mongoose.SchemaTypes.ObjectId,
-            ref: 'Tourist'
-        }
-    },
     isAvailable:{
         type:Boolean,
+        default:false
     }
 })
 guideSchema.methods.createJWT = function () {
