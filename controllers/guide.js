@@ -1,7 +1,6 @@
-import mongoose from "mongoose";
+
 import Guide from "../models/guideModel.js";
 import bcrypt from "bcryptjs";
-import Tourist from "../models/touristModel.js";
 
 export const register = async (req, res, next) => {
   const {
@@ -15,11 +14,11 @@ export const register = async (req, res, next) => {
     password,
   } = req.body;
   if (!firstName || !lastName || !contactNo || !gender || !age || !location) {
-    return res.json({ message: "Missing informations" });
+    return res.status(400).json({ message: "Missing informations" });
   }
   const user = await Guide.findOne({ email });
   if (user) {
-    return res.json({ message: "User already exists" });
+    return res.status(400).json({ message: "User already exists" });
   }
   const hashedPassword = await bcrypt.hash(password, 10);
 
@@ -33,22 +32,22 @@ export const register = async (req, res, next) => {
     email,
     password: hashedPassword,
   });
-  return res.json({ message: "Register Success", guide });
+  return res.status(201).json({ message: "Register Success", guide });
 };
 
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;
     if (!email || !password) {
-      return res.json({ message: "Missing information" });
+      return res.status(400).json({ message: "Missing information" });
     }
     const guide = await Guide.findOne({ email });
     if (!guide) {
-      return res.json({ message: "User doesnot exists" });
+      return res.status(400).json({ message: "User doesnot exists" });
     }
     const isPasswordMatched = await guide.matchPassword(password);
     if (!isPasswordMatched) {
-      return res.json({ message: "User doesnot exist" });
+      return res.status(400).json({ message: "User doesnot exist" });
     }
     // remaining to handle create session here
     const token = guide.createJWT();
