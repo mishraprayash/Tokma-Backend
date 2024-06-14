@@ -3,25 +3,9 @@ import Tourist from "../models/touristModel.js";
 export const register = async (req, res, next) => {
     try {
         const {
-            firstName,
-            lastName,
-            contactNo,
-            country,
-            gender,
-            email,
-            age,
-            password,
+            firstName, lastName, contactNo, country, gender, email, age, password,
         } = req.body;
-        if (
-            !firstName ||
-            !lastName ||
-            !contactNo ||
-            !country ||
-            !gender ||
-            !email ||
-            !age ||
-            !password ||
-            !phoneNo
+        if (!firstName || !lastName || !contactNo || !country || !gender || !email || !age || !password || !phoneNo
         ) {
             return res.json({ message: "Missing informations" });
         }
@@ -31,16 +15,7 @@ export const register = async (req, res, next) => {
         }
         const hashedPassword = await bcrypt.hash(password, 10);
 
-        const tourist = await Tourist.create({
-            firstName,
-            lastName,
-            contactNo,
-            country,
-            gender,
-            email,
-            age,
-            password: hashedPassword,
-        });
+        const tourist = await Tourist.create({ firstName, lastName, contactNo, country, gender, email, age, password: hashedPassword });
         return res.json({ msg: "Successfully created", tourist });
     } catch (error) {
         console.log(error);

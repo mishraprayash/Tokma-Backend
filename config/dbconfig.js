@@ -7,7 +7,6 @@ export default async function connectDB() {
         }
         await mongoose.connect(process.env.DATABASE_REMOTE, {
             dbName:'Hackathon',
-            tls:true,
             connectTimeoutMS:20000
         }, );
 
