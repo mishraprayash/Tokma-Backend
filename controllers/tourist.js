@@ -25,7 +25,7 @@ export const register = async (req, res, next) => {
     ) {
       return res.json({ message: "Missing informations" });
     }
-    const user = await Guide.findOne({ email });
+    const user = await Tourist.findOne({ email });
     if (user) {
       return res.status(400).json({ message: "User already exists" });
     }
@@ -47,7 +47,14 @@ export const register = async (req, res, next) => {
     res.status(500).json({ error });
   }
 };
-
+export const detail = async (req, res, next) => {
+  const user = req.user;
+  console.log(user);
+  res.json({ data: user });
+  // try{
+  //   // const userDetail=await Tourist.find
+  // }
+};
 export const login = async (req, res, next) => {
   try {
     const { email, password } = req.body;

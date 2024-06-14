@@ -1,19 +1,21 @@
-
 import Guide from "../models/guideModel.js";
 import bcrypt from "bcryptjs";
 
 export const register = async (req, res, next) => {
   const {
-    firstName,
-    lastName,
-    contactNo,
-    gender,
-    age,
-    location,
-    email,
-    password,
+    firstName, //
+    lastName, //
+    contactNo, //
+    gender, //
+    age, //
+    // location,
+
+    email, //
+    password, //
+    isAvailable, //
+    isApproved, //
   } = req.body;
-  if (!firstName || !lastName || !contactNo || !gender || !age || !location) {
+  if (!firstName || !lastName || !contactNo || !gender || !age) {
     return res.status(400).json({ message: "Missing informations" });
   }
   const user = await Guide.findOne({ email });
@@ -28,9 +30,11 @@ export const register = async (req, res, next) => {
     contactNo,
     gender,
     age,
-    location,
+    // location,
     email,
     password: hashedPassword,
+    isAvailable,
+    isApproved,
   });
   return res.status(201).json({ message: "Register Success", guide });
 };

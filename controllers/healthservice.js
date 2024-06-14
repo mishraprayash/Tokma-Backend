@@ -66,7 +66,7 @@ export const nearbyHealth = async (req, res, next) => {
             type: "Point",
             coordinates: [lon, lat],
           },
-          $maxDistance: 1000,
+          $maxDistance: 1000, //1000 m =1km
         },
       },
     });
