@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 
-import { register, login } from "../controllers/healthservice.js";
+import { register, login, serviceStatus, fetchDashboardInfo } from "../controllers/healthservice.js";
 
 import { isAuthenticated } from "../middleware/auth.js";
 
