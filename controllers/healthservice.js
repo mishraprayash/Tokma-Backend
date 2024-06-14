@@ -1,4 +1,4 @@
-import healthService from "../models/healthserviceModel"
+import healthService from "../models/healthserviceModel.js"
 
 export const register = async (req, res, next) => {
     const { name, contactNo, email, password, description, geoLocation } = req.body;
