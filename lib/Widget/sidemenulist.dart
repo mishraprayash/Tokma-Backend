@@ -1,14 +1,17 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:yatri/database/db_handler.dart';
 
 class SideMenuList extends StatefulWidget {
-  const SideMenuList({super.key});
+  const SideMenuList({Key? key}) : super(key: key);
 
   @override
   State<SideMenuList> createState() => _SideMenuListState();
 }
 
 class _SideMenuListState extends State<SideMenuList> {
+  DatabaseHelper _databaseHelper = DatabaseHelper();
+
   @override
   Widget build(BuildContext context) {
     ScreenUtil.init(context);
@@ -16,21 +19,31 @@ class _SideMenuListState extends State<SideMenuList> {
       backgroundColor: const Color(0xFFA1662f),
       body: ListView(
         children: [
-          _buildMenuItem(Icons.home, 'Home', '/home'),
+          _buildMenuItem(Icons.home, 'Home', '/homefortourist'),
           _buildMenuItem(Icons.food_bank_sharp, 'Food & Lodge', '/foodlodge'),
           _buildMenuItem(Icons.emergency, 'Emergency', '/emergency'),
           _buildMenuItem(Icons.person, 'Hire Guide', '/hireguide'),
           _buildMenuItem(
               Icons.health_and_safety, 'Health Services', '/healthservices'),
-          _buildMenuItem(Icons.settings, 'Settings', '/settings'),
+          _buildMenuItem(Icons.person, 'Profile', '/profile'),
           _buildMenuItem(Icons.logout, 'Logout', '/login', isLogout: true),
         ],
       ),
     );
   }
 
-  void _logout() {
+  void _logout() async {
     print("User logged out");
+
+    // Clear app state (login status) from SQLite database
+    await _databaseHelper.updateState(false, '');
+
+    // Navigate to the login screen and remove all other routes
+    Navigator.pushNamedAndRemoveUntil(
+      context,
+      '/login',
+      (Route<dynamic> route) => false,
+    );
   }
 
   Widget _buildMenuItem(IconData iconData, String text, String routeName,
@@ -62,8 +75,6 @@ class _SideMenuListState extends State<SideMenuList> {
         onTap: () {
           if (isLogout) {
             _logout();
-            Navigator.pushNamedAndRemoveUntil(
-                context, routeName, (Route<dynamic> route) => false);
           } else {
             Navigator.pushNamed(context, routeName);
           }

@@ -38,6 +38,7 @@ dependencies:
   flutter_screenutil: ^5.9.3
   http: ^1.2.1
   sqflite: ^2.3.3+1
+  geolocator: ^8.0.0
 
 dev_dependencies:
   flutter_test:

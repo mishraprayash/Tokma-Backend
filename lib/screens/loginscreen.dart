@@ -1,7 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:http/http.dart' as http;
+import 'package:yatri/Widget/locationservices.dart';
 import 'package:yatri/database/db_handler.dart';
 import 'package:yatri/main.dart';
 
@@ -19,6 +21,8 @@ class _LoginScreenState extends State<LoginScreen> {
   final DatabaseHelper dbHelper = DatabaseHelper();
   // Form key for validation
   final _formKey = GlobalKey<FormState>();
+
+  String? locationMessage;
 
   @override
   Widget build(BuildContext context) {
@@ -88,9 +92,20 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () {
+                  onPressed: () async {
                     if (_formKey.currentState!.validate()) {
-                      _handleLogin();
+                      Position? position =
+                          await LocationServices.getCurrentLocation();
+                      if (position != null) {
+                        _handleLogin();
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(
+                            content: Text(
+                                'Location permissions are required for login.'),
+                          ),
+                        );
+                      }
                     }
                   },
                   child: Text('Login as $_userType'),
@@ -146,12 +161,14 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         body: jsonEncode(credentials),
       );
+      print(response);
 
       if (response.statusCode == 200) {
         await dbHelper.updateState(true, _userType);
         Navigator.pushReplacementNamed(context,
             _userType == 'Tourist' ? '/homefortourist' : '/homeforlocalguide');
       } else {
+        print('Login Failed: ${response.statusCode} - ${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Login Failed: ${response.body}')),
         );

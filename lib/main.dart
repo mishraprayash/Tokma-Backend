@@ -7,7 +7,7 @@ import 'package:yatri/screens/hireguidescreen.dart';
 import 'package:yatri/screens/homescreenforlocalguide.dart';
 import 'package:yatri/screens/homescreenfortourist.dart';
 import 'package:yatri/screens/loginscreen.dart';
-import 'package:yatri/screens/setting.dart';
+import 'package:yatri/screens/profile.dart';
 import 'package:yatri/screens/signupscreen.dart';
 import 'package:yatri/screens/splashscreen.dart';
 
@@ -36,7 +36,7 @@ class MyApp extends StatelessWidget {
         '/emergency': (context) => const EmergencyScreen(),
         '/hireguide': (context) => const HireGuideScreen(),
         '/login': (context) => const LoginScreen(),
-        '/settings': (context) => const SettingScreen(),
+        '/profile': (context) => const ProfileScreen(),
         '/signup': (context) => const SignUpScreen(),
         '/healthservices': (context) => const HealthServicesScreen(),
       },

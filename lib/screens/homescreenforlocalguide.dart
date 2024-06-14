@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
-import 'package:yatri/Widget/sidemenulist.dart';
-import 'package:yatri/main.dart';
+import 'package:yatri/database/db_handler.dart';
 
 class HomeScreenForLocalGuide extends StatefulWidget {
   const HomeScreenForLocalGuide({super.key});
@@ -11,69 +10,100 @@ class HomeScreenForLocalGuide extends StatefulWidget {
 }
 
 class _HomeScreenForLocalGuideState extends State<HomeScreenForLocalGuide> {
+  late Map<String, dynamic> _localGuideDetails;
+
+  @override
+  void initState() {
+    super.initState();
+    _fetchLocalGuideDetails();
+  }
+
+  Future<void> _fetchLocalGuideDetails() async {
+    try {
+      DatabaseHelper databaseHelper = DatabaseHelper();
+      _localGuideDetails = await databaseHelper.getLocalGuideDetails();
+      setState(() {}); // Update UI with fetched details
+    } catch (e) {
+      print('Error fetching local guide details: $e');
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
-    // Initializing media query for getting device screen size
-    mq = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        actions: [
-          SizedBox(
-            width: mq.width * .02,
-          ),
-          SizedBox(
-            width: mq.width * 0.76,
-            height: mq.height * 0.05,
-            child: TextField(
-              decoration: InputDecoration(
-                hintText: 'Search services...',
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
-                  borderSide: BorderSide.none,
+        title: Text('Home Screen'),
+      ),
+      body: _localGuideDetails.isNotEmpty
+          ? Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Profile Information:',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text(
+                          'Name: ${_localGuideDetails['fname']} ${_localGuideDetails['lname']}'),
+                      Text('Email: ${_localGuideDetails['email']}'),
+                      Text('Contact Number: ${_localGuideDetails['phnumber']}'),
+                      Text('Gender: ${_localGuideDetails['gender']}'),
+                      Text('Age: ${_localGuideDetails['age']}'),
+                      Text(
+                          'Location: ${_localGuideDetails['province']}, ${_localGuideDetails['district']}, ${_localGuideDetails['placeName']}'),
+                    ],
+                  ),
                 ),
-                filled: true,
-                fillColor: Colors.grey[200],
-                contentPadding:
-                    const EdgeInsets.symmetric(vertical: 0, horizontal: 16.0),
-                suffixIcon: const Icon(Icons.search),
-              ),
+                Spacer(),
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text(
+                        'Availability:',
+                        style: TextStyle(
+                          fontSize: 20,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      SizedBox(height: 8),
+                      Text('Status: Available'),
+                      Text(
+                          'Local Time: ${DateTime.now().toString().substring(11, 16)}'),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 16),
+                Center(
+                  child: ElevatedButton(
+                    onPressed: () {
+                      // Perform logout functionality
+                      _handleLogout();
+                    },
+                    child: Text('Logout'),
+                  ),
+                ),
+                SizedBox(height: 16),
+              ],
+            )
+          : Center(
+              child: CircularProgressIndicator(),
             ),
-          ),
-          SizedBox(
-            width: mq.width * .02,
-          ),
-          CircleAvatar(
-            backgroundImage: AssetImage(
-              'assets/tokma.png',
-            ),
-          ),
-        ],
-        iconTheme: const IconThemeData(color: Colors.white),
-      ),
-      drawer: const Drawer(
-        elevation: 0,
-        shape: RoundedRectangleBorder(side: BorderSide.none),
-        child: SideMenuList(),
-      ),
-      body: Column(
-        children: [
-          const SizedBox(
-              height: 16.0), // Add space between AppBar and Container
-          Container(
-            width: double.infinity,
-            color: Colors.lightBlue[100],
-            padding: const EdgeInsets.all(7.0),
-            child: const Text(
-              "\"Serve\"",
-              style: TextStyle(
-                fontSize: 24.0,
-                color: Colors.black,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
-      ),
     );
+  }
+
+  void _handleLogout() {
+    // Implement logout functionality as per your application's requirements
+    // Example: Clear session, navigate to login screen, etc.
+    Navigator.pushNamed(context, '/login');
   }
 }

@@ -16,13 +16,16 @@ class _SignUpScreenForTouristState extends State<SignUpScreenForTourist> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _contactNoController = TextEditingController();
   final TextEditingController _countryController = TextEditingController();
-  final TextEditingController _genderController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _emergencyPhoneNoController =
       TextEditingController();
   final TextEditingController _emergencyEmailController =
       TextEditingController();
+  final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
+
+  String? _genderValue;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -37,138 +40,144 @@ class _SignUpScreenForTouristState extends State<SignUpScreenForTourist> {
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(12.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+        child: Form(
+          key: _formKey,
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              const Text('Please enter your details:'),
+              const SizedBox(height: 10),
+              _buildTextField(_firstNameController, 'First Name'),
+              const SizedBox(height: 10),
+              _buildTextField(_lastNameController, 'Last Name'),
+              const SizedBox(height: 10),
+              _buildTextField(_emailController, 'Email',
+                  inputType: TextInputType.emailAddress),
+              const SizedBox(height: 10),
+              _buildTextField(_contactNoController, 'Contact Number',
+                  inputType: TextInputType.phone),
+              const SizedBox(height: 10),
+              _buildTextField(_countryController, 'Country'),
+              const SizedBox(height: 10),
+              _buildDropdownField(),
+              const SizedBox(height: 10),
+              _buildTextField(_ageController, 'Age',
+                  inputType: TextInputType.number),
+              const SizedBox(height: 10),
+              _buildTextField(_passwordController, 'Password',
+                  isPassword: true),
+              const SizedBox(height: 10),
+              _buildTextField(
+                  _emergencyPhoneNoController, 'Emergency Contact Phone Number',
+                  inputType: TextInputType.phone),
+              const SizedBox(height: 10),
+              _buildTextField(
+                  _emergencyEmailController, 'Emergency Contact Email',
+                  inputType: TextInputType.emailAddress),
+              const SizedBox(height: 20),
+              _buildSignUpButton(),
+              const SizedBox(height: 20),
+              _buildLoginPrompt(),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+
+  TextFormField _buildTextField(TextEditingController controller, String label,
+      {TextInputType inputType = TextInputType.text, bool isPassword = false}) {
+    return TextFormField(
+      controller: controller,
+      decoration: InputDecoration(
+        labelText: label,
+        border: const OutlineInputBorder(),
+      ),
+      obscureText: isPassword,
+      keyboardType: inputType,
+      validator: (value) {
+        if (value == null || value.isEmpty) {
+          return 'Please enter your $label';
+        }
+        return null;
+      },
+    );
+  }
+
+  DropdownButtonFormField<String> _buildDropdownField() {
+    return DropdownButtonFormField<String>(
+      value: _genderValue,
+      onChanged: (String? newValue) {
+        setState(() {
+          _genderValue = newValue;
+        });
+      },
+      items: <String>['Male', 'Female', 'Others']
+          .map<DropdownMenuItem<String>>((String value) {
+        return DropdownMenuItem<String>(
+          value: value,
+          child: Text(value),
+        );
+      }).toList(),
+      decoration: const InputDecoration(
+        labelText: 'Gender',
+        border: OutlineInputBorder(),
+      ),
+      validator: (value) {
+        if (value == null) {
+          return 'Please select your gender';
+        }
+        return null;
+      },
+    );
+  }
+
+  Widget _buildSignUpButton() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 70),
+      child: Column(
+        children: [
+          TextButton(
+            style: TextButton.styleFrom(
+              padding: const EdgeInsets.symmetric(vertical: 12, horizontal: 50),
+              backgroundColor: const Color(0xFFA1662f),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(20),
+              ),
+            ),
+            onPressed: _isLoading ? null : _handleSignUp,
+            child: _isLoading
+                ? const CircularProgressIndicator(color: Colors.white)
+                : const Text(
+                    'Sign Up as Tourist',
+                    style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 18,
+                    ),
+                  ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLoginPrompt() {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: 50),
+      child: RichText(
+        text: TextSpan(
           children: [
-            const Text('Please enter your details:'),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _firstNameController,
-              decoration: const InputDecoration(
-                labelText: 'First Name',
-                border: OutlineInputBorder(),
-              ),
+            const TextSpan(
+              text: "Already have an account? ",
+              style: TextStyle(color: Colors.black, fontSize: 16),
             ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _lastNameController,
-              decoration: const InputDecoration(
-                labelText: 'Last Name',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _emailController,
-              decoration: const InputDecoration(
-                labelText: 'Email',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _contactNoController,
-              decoration: const InputDecoration(
-                labelText: 'Contact Number',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _countryController,
-              decoration: const InputDecoration(
-                labelText: 'Country',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _genderController,
-              decoration: const InputDecoration(
-                labelText: 'Gender',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _ageController,
-              decoration: const InputDecoration(
-                labelText: 'Age',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _passwordController,
-              decoration: const InputDecoration(
-                labelText: 'Password',
-                border: OutlineInputBorder(),
-              ),
-              obscureText: true,
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _emergencyPhoneNoController,
-              decoration: const InputDecoration(
-                labelText: 'Emergency Contact Phone Number',
-                border: OutlineInputBorder(),
-              ),
-              keyboardType: TextInputType.number,
-            ),
-            const SizedBox(height: 10),
-            TextField(
-              controller: _emergencyEmailController,
-              decoration: const InputDecoration(
-                labelText: 'Emergency Contact Email',
-                border: OutlineInputBorder(),
-              ),
-            ),
-            const SizedBox(height: 20),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 50),
-              child: Column(
-                children: [
-                  TextButton(
-                    style: TextButton.styleFrom(
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 12, horizontal: 50),
-                      backgroundColor: const Color(0xFFA1662f),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20),
-                      ),
-                    ),
-                    onPressed: _handleSignUp,
-                    child: const Text(
-                      'Sign Up as Tourist',
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 18,
-                      ),
-                    ),
-                  ),
-                  const SizedBox(height: 20),
-                  RichText(
-                    text: TextSpan(
-                      children: [
-                        const TextSpan(
-                          text: "Already have an account? ",
-                          style: TextStyle(color: Colors.black, fontSize: 16),
-                        ),
-                        TextSpan(
-                          text: "Login Here",
-                          style: const TextStyle(
-                              color: Color(0xFFA1662f), fontSize: 16),
-                          recognizer: TapGestureRecognizer()
-                            ..onTap = () {
-                              Navigator.pushNamed(context, '/login');
-                            },
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
+            TextSpan(
+              text: "Login Here",
+              style: const TextStyle(color: Color(0xFFA1662f), fontSize: 16),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () {
+                  Navigator.pushNamed(context, '/login');
+                },
             ),
           ],
         ),
@@ -177,44 +186,58 @@ class _SignUpScreenForTouristState extends State<SignUpScreenForTourist> {
   }
 
   void _handleSignUp() async {
-    String url = 'https://tokma.onrender.com/api/tourist/register';
+    if (_formKey.currentState!.validate()) {
+      setState(() {
+        _isLoading = true;
+      });
 
-    Map<String, dynamic> userData = {
-      'firstName': _firstNameController.text,
-      'lastName': _lastNameController.text,
-      'email': _emailController.text,
-      'contactNo': _contactNoController.text,
-      'country': _countryController.text,
-      'gender': _genderController.text,
-      'age': int.parse(_ageController.text),
-      'password': _passwordController.text,
-      'emergencyContactInfo': {
-        'phoneNo': int.parse(_emergencyPhoneNoController.text),
-        'email': _emergencyEmailController.text,
-      }
-    };
+      String url = 'https://tokma.onrender.com/api/tourist/register';
 
-    try {
-      var response = await http.post(
-        Uri.parse(url),
-        headers: <String, String>{
-          'Content-Type': 'application/json; charset=UTF-8',
-        },
-        body: jsonEncode(userData),
-      );
+      Map<String, dynamic> userData = {
+        'firstName': _firstNameController.text,
+        'lastName': _lastNameController.text,
+        'email': _emailController.text,
+        'contactNo': _contactNoController.text,
+        'country': _countryController.text,
+        'gender': _genderValue,
+        'age': int.parse(_ageController.text),
+        'password': _passwordController.text,
+        'emergencyNumber': _emergencyPhoneNoController.text,
+        'emergencyEmail': _emergencyEmailController.text,
+      };
 
-      if (response.statusCode == 200) {
-        Navigator.pushNamed(context, '/login');
-      } else {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Signup Failed: ${response.body}')),
+      try {
+        var response = await http.post(
+          Uri.parse(url),
+          headers: <String, String>{
+            'Content-Type': 'application/json; charset=UTF-8',
+          },
+          body: jsonEncode(userData),
         );
+
+        setState(() {
+          _isLoading = false;
+        });
+
+        if (response.statusCode == 200) {
+          Navigator.pushNamed(context, '/login');
+        } else {
+          _showSnackBar('Signup Failed: ${response.body}');
+        }
+      } catch (e) {
+        setState(() {
+          _isLoading = false;
+        });
+        _showSnackBar('Error: $e');
       }
-    } catch (e) {
-      print('Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
-      );
+    } else {
+      _showSnackBar('Please fill all the required fields');
     }
+  }
+
+  void _showSnackBar(String message) {
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(content: Text(message)),
+    );
   }
 }

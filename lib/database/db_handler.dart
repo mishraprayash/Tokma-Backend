@@ -37,7 +37,22 @@ class DatabaseHelper {
     )
   ''');
     await db.execute('''
-    CREATE TABLE details (
+      CREATE TABLE touristsdetails (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        fname TEXT,
+        lname TEXT,
+        email TEXT,
+        phnumber TEXT,
+        country TEXT,
+        gender TEXT,
+        age TEXT,
+        password TEXT,
+        emergencycontact TEXT,
+        emergencyemail TEXT
+      )
+    ''');
+    await db.execute('''
+    CREATE TABLE localguidedetails (
       fname TEXT,
       lname TEXT,
       email TEXT,
@@ -46,16 +61,56 @@ class DatabaseHelper {
       gender TEXT,
       age TEXT,
       password TEXT,
-      emergencycontact TEXT,
-      emergencyemail TEXT
+      province TEXT,
+      district TEXT,
+      placeName TEXT
     )
   ''');
   }
 
+  Future<void> insertTouristDetails(Map<String, dynamic> details) async {
+    final Database db = await database;
+    await db.insert('touristsdetails', details);
+  }
+
+  Future<Map<String, dynamic>> getTouristDetails() async {
+    final Database db = await database;
+    List<Map<String, dynamic>> results = await db.query('touristsdetails');
+
+    if (results.isNotEmpty) {
+      return results.first;
+    } else {
+      throw Exception('Tourist details not found');
+    }
+  }
+
+  Future<void> insertLocalGuideDetails(Map<String, dynamic> details) async {
+    final Database db = await database;
+    await db.insert('localguidedetails', details);
+  }
+
+  Future<Map<String, dynamic>> getLocalGuideDetails() async {
+    final Database db = await database;
+    List<Map<String, dynamic>> results = await db.query('localguidedetails');
+
+    if (results.isNotEmpty) {
+      return results.first;
+    } else {
+      throw Exception('Local guide details not found');
+    }
+  }
+
   Future<void> updateState(bool idRequested, String userType) async {
     final Database db = await database;
-    await db.insert('app_state',
-        {'idRequested': idRequested ? 1 : 0, 'userType': userType});
+
+    // Clear existing state (only one row should exist)
+    await db.delete('app_state');
+
+    // Insert new state
+    await db.insert(
+      'app_state',
+      {'idRequested': idRequested ? 1 : 0, 'userType': userType},
+    );
   }
 
   Future<Map<String, dynamic>> getAppState() async {

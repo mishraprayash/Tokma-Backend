@@ -3,7 +3,7 @@ import 'package:yatri/database/db_handler.dart';
 import 'package:yatri/main.dart';
 import 'package:yatri/screens/homescreenfortourist.dart';
 import 'package:yatri/screens/homescreenforlocalguide.dart';
-import 'package:yatri/screens/loginscreen.dart';
+import 'package:yatri/screens/signupscreen.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
@@ -47,7 +47,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(
-          builder: (context) => const LoginScreen(),
+          builder: (context) => const SignUpScreen(),
         ),
       );
     }

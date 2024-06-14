@@ -51,21 +51,24 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
       ),
       body: Column(
         children: [
-          const SizedBox(
-              height: 16.0), // Add space between AppBar and Container
           Container(
             width: double.infinity,
-            color: Colors.lightBlue[100],
+            color: Color.fromARGB(255, 173, 150, 128),
             padding: const EdgeInsets.all(7.0),
             child: const Text(
-              "\"Travel Smart, Travel Safe\"",
+              "Travel Smart, Travel Safe",
               style: TextStyle(
                 fontSize: 24.0,
-                color: Colors.black,
+                color: Colors.white,
               ),
               textAlign: TextAlign.center,
             ),
           ),
+          Text(
+            "Discover Places",
+            style: TextStyle(
+                color: Colors.black, fontSize: 16, fontWeight: FontWeight.w600),
+          )
         ],
       ),
     );
