@@ -6,7 +6,7 @@ import cookieParser from "cookie-parser"
 
 import guideRoutes from "./routes/guideRoutes.js"
 import adminRoutes from "./routes/adminRoutes.js"
-import touristRoutes from "./routes/adminRoutes.js"
+import touristRoutes from "./routes/touristRoutes.js"
 import healthServiceRoutes from "./routes/healthServiceRoutes.js"
 import notFoundMiddleware from "./middleware/not-found.js"
 

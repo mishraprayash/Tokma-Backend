@@ -46,7 +46,12 @@ const guideSchema = new mongoose.Schema({
     type: Boolean,
     default: false,
   },
+  description: {
+    type: String,
+    required: true
+  }
 });
+
 guideSchema.methods.createJWT = function () {
   return jwt.sign(
     { id: this._id, email: this.email, role: this.role },

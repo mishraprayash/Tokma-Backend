@@ -50,7 +50,7 @@ export const login = async (req, res, next) => {
             httpOnly: false,
             secure: false,
             maxAge: 24 * 60 * 60 * 100,
-            domain:''
+            domain:'http://localhost:3000'
         });
 
         return res.status(200).json({ message: "Login Success", token });
@@ -139,8 +139,6 @@ export const rejectHealthService = async (req, res, next) => {
         return res.status(500).json({ error });
     }
 }
-
-
 
 // fetchDashboardInfo for admin
 export const fetchDashboardInfo = async (req, res, next) => {

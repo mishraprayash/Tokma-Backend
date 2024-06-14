@@ -2,14 +2,6 @@ import mongoose from "mongoose"
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
 
-const emergencyContactInfoSchema = new mongoose.Schema({
-    phoneNo: {
-        type: Number
-    },
-    email: {
-        type: String,
-    }
-}, { _id: false })
 
 const touristSchema = new mongoose.Schema({
     firstName: {
@@ -47,7 +39,13 @@ const touristSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    emergencyContactInfoSchema
+    emergencyEmail:{
+        type:String,
+    },
+    emergencyNumber:{
+        type:String,
+        maxLength:10,
+    }
 })
 
 
