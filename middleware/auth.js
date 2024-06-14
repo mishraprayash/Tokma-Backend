@@ -8,6 +8,7 @@ export const isAuthenticated = async (req, res, next) => {
             return res.status(403).json({ message: "Unauthorized Access" });
         }
         const decodedToken = jwt.verify(token, process.env.JWT_SECRET)
+        console.log(decodedToken);
         req.user = decodedToken
         next()
     } catch (error) {

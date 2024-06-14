@@ -40,7 +40,6 @@ app.use(notFoundMiddleware);
 const startServer = async () => {
     try {
         await connectDB()
-        console.log('DB Connected');
         app.listen(PORT, (req, res) => {
             console.log(`Server listening on port ${PORT}.....`);
         })

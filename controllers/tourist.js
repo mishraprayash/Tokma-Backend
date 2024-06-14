@@ -6,7 +6,7 @@ export const register = async (req, res, next) => {
         if (!name || !contactNo || !gender || !age) {
             return res.json({ message: "Missing informations" });
         }
-        const tourist = await Guide.create({
+        const tourist = await Tourist.find({}).create({
             ...req.body
         })
         return res.json({ tourist });

@@ -3,17 +3,18 @@ import Admin from "../models/adminModel.js"
 import Guide from "../models/guideModel.js"
 import Tourist from "../models/touristModel.js"
 import mongoose from "mongoose"
+import healthService from "../models/healthserviceModel.js"
 
 // register 
 export const register = async (req, res, next) => {
     try {
         const { username, email, password } = req.body
         if (!password || !username || !email) {
-            return res.json({ message: "Missing informations" })
+            return res.status(400).json({ message: "Missing informations" })
         }
         const user = await Admin.findOne({ email });
         if (user) {
-            return res.json({ message: "User already exists" })
+            return res.status(400).json({ message: "User already exists" })
         }
         const hashedPassword = await bcrypt.hash(password, 10);
         const admin = await Admin.create({
@@ -32,16 +33,16 @@ export const login = async (req, res, next) => {
     try {
         const { email, password } = req.body;
         if (!email || !password) {
-            return res.json({ message: "Missing information" });
+            return res.status(400).json({ message: "Missing information" });
         }
         const admin = await Admin.findOne({ email });
         if (!admin) {
-            return res.json({ message: "User doesnot exists" });
+            return res.status(400).json({ message: "User doesnot exists" });
         }
         const isPasswordMatched = await admin.matchPassword(password);
 
         if (!isPasswordMatched) {
-            return res.json({ message: "User doesnot exist" });
+            return res.status(400).json({ message: "User doesnot exist" });
         }
         // remaining to handle create session here 
         const token = admin.createJWT();
@@ -63,7 +64,7 @@ export const login = async (req, res, next) => {
 export const approveGuide = async (req, res, next) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(404).json({ message: "Invalid ID format" });
+            return res.status(400).json({ message: "Invalid ID format" });
         }
         const id = new mongoose.Types.ObjectId(req.params.id);
         const guide = await Guide.findById(id);
@@ -83,9 +84,8 @@ export const approveGuide = async (req, res, next) => {
 // reject guide
 export const rejectGuide = async (req, res, next) => {
     try {
-
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(404).json({ message: "Invalid ID format" });
+            return res.status(400).json({ message: "Invalid ID format" });
         }
         const id = new mongoose.Types.ObjectId(id);
         const guide = await Guide.findById(id);
@@ -100,18 +100,39 @@ export const rejectGuide = async (req, res, next) => {
     }
 }
 
+// accept health service
 export const approveHealthService = async (req, res, next) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
-            return res.status(404).json({ message: "Invalid ID format" });
+            return res.status(400).json({ message: "Invalid ID format" });
         }
-        const id = new mongoose.Types.ObjectId(id);
-        const healthService = await healthServiceModel.findById(id);
-        if (!healthService) {
+        const id = new mongoose.Types.ObjectId(req.params.id);
+        const healthServ = await healthService.findById(id);
+        if (!healthServ) {
             return res.status(400).json({ message: "Service doesnot exists" })
         }
-        await Guide.deleteOne(id);
-        return res.status(200).json({ message: 'Guide Rejected' })
+        healthServ.isApproved = true
+        await healthServ.save()
+        return res.status(200).json({ message: 'Service Rejected' })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error });
+    }
+}
+
+// reject health service
+export const rejectHealthService = async (req, res, next) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: "Invalid ID format" });
+        }
+        const id = new mongoose.Types.ObjectId(id);
+        const healthServ = await healthService.findById(id);
+        if (!healthServ) {
+            return res.status(400).json({ message: "User doesnot exists" })
+        }
+        await healthServ.deleteOne(id);
+        return res.status(200).json({ message: 'Service Rejected' })
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error });
@@ -120,14 +141,17 @@ export const approveHealthService = async (req, res, next) => {
 
 
 
-// fetchDashboardInfo
+// fetchDashboardInfo for admin
 export const fetchDashboardInfo = async (req, res, next) => {
     try {
-        const pendingGuides = await Guide.find({ isApproved: false })
-        const guideCount = await Guide.countDocuments({ isApproved: true })
+        
+        const pendingGuides = await Guide.find({ isApproved: false },{password:false})
+        const guideCount = await Guide.countDocuments({ isApproved: true})
         const touristCount = await Tourist.countDocuments()
+        const pendingHealthService = await healthService.find({ isApproved: false },{_id:true})
         return res.status(200).json({
             guides: pendingGuides,
+            healthService:pendingHealthService,
             guideCount,
             touristCount,
             totalCount: guideCount + touristCount
