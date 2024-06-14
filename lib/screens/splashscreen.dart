@@ -1,12 +1,10 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'package:flutter/material.dart';
 import 'package:yatri/database/db_handler.dart';
 import 'package:yatri/main.dart';
 import 'package:yatri/screens/homescreenfortourist.dart';
-import 'package:yatri/screens/signupscreen.dart';
+import 'package:yatri/screens/homescreenforlocalguide.dart';
+import 'package:yatri/screens/loginscreen.dart';
 
-// This is the splash screen widget which appears when the app is launched
 class SplashScreen extends StatefulWidget {
   const SplashScreen({super.key});
 
@@ -20,22 +18,39 @@ class _SplashScreenState extends State<SplashScreen> {
   @override
   void initState() {
     super.initState();
+    _checkLoginStatus();
+  }
 
-    Future.delayed(const Duration(seconds: 2), () async {
-      bool idRequested = await dbHelper.getIdRequestedState();
+  Future<void> _checkLoginStatus() async {
+    await Future.delayed(
+        const Duration(seconds: 2)); // Simulate a splash screen delay
+    Map<String, dynamic> appState = await dbHelper.getAppState();
 
-      if (idRequested) {
+    if (appState['idRequested'] == 1) {
+      String userType = appState['userType'];
+      if (userType == 'Tourist') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const HomeScreenForTourist()),
+          MaterialPageRoute(
+            builder: (context) => const HomeScreenForTourist(),
+          ),
         );
-      } else {
+      } else if (userType == 'Local Guide') {
         Navigator.pushReplacement(
           context,
-          MaterialPageRoute(builder: (_) => const SignUpScreen()),
+          MaterialPageRoute(
+            builder: (context) => const HomeScreenForLocalGuide(),
+          ),
         );
       }
-    });
+    } else {
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(
+          builder: (context) => const LoginScreen(),
+        ),
+      );
+    }
   }
 
   @override
@@ -58,7 +73,7 @@ class _SplashScreenState extends State<SplashScreen> {
               ),
             ),
             const SizedBox(height: 30),
-            Text(
+            const Text(
               "\"Travel Smart, Travel Safe\"",
               style: TextStyle(
                 fontSize: 24.0,

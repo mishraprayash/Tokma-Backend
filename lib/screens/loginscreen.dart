@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:yatri/database/db_handler.dart';
 import 'package:yatri/main.dart';
 
 class LoginScreen extends StatefulWidget {
@@ -15,7 +16,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   String _userType = 'Tourist';
-
+  final DatabaseHelper dbHelper = DatabaseHelper();
   // Form key for validation
   final _formKey = GlobalKey<FormState>();
 
@@ -98,23 +99,26 @@ class _LoginScreenState extends State<LoginScreen> {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: mq.height * 0.055),
                   child: RichText(
-                      text: TextSpan(children: [
-                    const TextSpan(
-                      text: "Don't have an account? ",
-                      style: TextStyle(color: Colors.black, fontSize: 16),
+                    text: TextSpan(
+                      children: [
+                        const TextSpan(
+                          text: "Don't have an account? ",
+                          style: TextStyle(color: Colors.black, fontSize: 16),
+                        ),
+                        TextSpan(
+                          text: "Sign Up Here",
+                          style: const TextStyle(
+                            color: Color(0xFFA1662f),
+                            fontSize: 16,
+                          ),
+                          recognizer: TapGestureRecognizer()
+                            ..onTap = () {
+                              Navigator.pushNamed(context, '/signup');
+                            },
+                        ),
+                      ],
                     ),
-                    TextSpan(
-                      text: "Sign Up Here",
-                      style: const TextStyle(
-                        color: Color(0xFFA1662f),
-                        fontSize: 16,
-                      ),
-                      recognizer: TapGestureRecognizer()
-                        ..onTap = () {
-                          Navigator.pushNamed(context, '/signup');
-                        },
-                    ),
-                  ])),
+                  ),
                 )
               ],
             ),
@@ -144,6 +148,7 @@ class _LoginScreenState extends State<LoginScreen> {
       );
 
       if (response.statusCode == 200) {
+        await dbHelper.updateState(true, _userType);
         Navigator.pushReplacementNamed(context,
             _userType == 'Tourist' ? '/homefortourist' : '/homeforlocalguide');
       } else {
@@ -154,7 +159,7 @@ class _LoginScreenState extends State<LoginScreen> {
     } catch (e) {
       print('Error: $e');
       ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Error: $e')),
+        SnackBar(content: Text('An error occurred. Please try again.')),
       );
     }
   }

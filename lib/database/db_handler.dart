@@ -26,24 +26,46 @@ class DatabaseHelper {
   Future<void> _onCreate(Database db, int version) async {
     await db.execute('''
     CREATE TABLE app_state (
-      idRequested INTEGER
+      idRequested INTEGER,
+      userType TEXT
+    )
+  ''');
+    await db.execute('''
+    CREATE TABLE session (
+      userid TEXT,
+      cookie TEXT
+    )
+  ''');
+    await db.execute('''
+    CREATE TABLE details (
+      fname TEXT,
+      lname TEXT,
+      email TEXT,
+      phnumber TEXT,
+      country TEXT,
+      gender TEXT,
+      age TEXT,
+      password TEXT,
+      emergencycontact TEXT,
+      emergencyemail TEXT
     )
   ''');
   }
 
-  Future<void> updateState(bool idRequested) async {
+  Future<void> updateState(bool idRequested, String userType) async {
     final Database db = await database;
-    await db.insert('app_state', {'idRequested': idRequested});
+    await db.insert('app_state',
+        {'idRequested': idRequested ? 1 : 0, 'userType': userType});
   }
 
-  Future<bool> getIdRequestedState() async {
+  Future<Map<String, dynamic>> getAppState() async {
     final Database db = await database;
     List<Map<String, dynamic>> results = await db.query('app_state');
 
     if (results.isNotEmpty) {
-      return results.first['idRequested'] == 1;
+      return results.first;
     } else {
-      return false;
+      return {'idRequested': 0, 'userType': ''};
     }
   }
 }
