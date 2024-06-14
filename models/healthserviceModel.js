@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import { type } from "os";
 
 const healthServiceSchema = new mongoose.Schema({
     name: {
@@ -37,8 +38,15 @@ const healthServiceSchema = new mongoose.Schema({
         required: true
     },
     geoLocation: {
-        type: String,
-        required: true
+        type: {
+            type: String,
+            enum: ["Point"],
+            required: true
+        },        
+        coordinates:{
+            type: [Number],
+            required: true
+        }
     },
     regionalLocation: {
         type: String,

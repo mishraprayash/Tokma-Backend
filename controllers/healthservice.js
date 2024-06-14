@@ -48,6 +48,24 @@ export const login = async (req, res, next) => {
     }
 }
 
+export const serviceStatus = async (req, res, next) => {
+    try{
+        const userid = req.user.id;
+        const {lat,lon} = req.body
+        const healthservice = await healthService.findById(userid)
+        healthservice.geoLocation.coordinates = [lon, lat];
+        const status = healthservice.isAvailable
+        healthservice.isAvailable =  !status
+        await healthservice.save()
+        return res.status(200).json({status: `${healthservice.isAvailable}`})
+    }catch(error){
+        console.log(error);
+        return res.status(500).json({ error })
+    }
+}
+
+
+
 export const fetchDashboardInfo = async (req, res, next) => {
     try {
         const guide = await healthService.findById(req.user.id)
