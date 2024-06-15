@@ -3,7 +3,9 @@ import JsonWebTokenError from "jsonwebtoken/lib/JsonWebTokenError.js";
 
 export const isAuthenticated = async (req, res, next) => {
     try {
-        const token = req.cookies.token;
+        const token = req.headers['Authorization'].split('Bearer ')[1]
+        // const token = req.cookies.token
+        return res.json({message:token})
         if (!token) {
             return res.status(403).json({ message: "Unauthorized Access" });
         }
