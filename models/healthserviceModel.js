@@ -1,4 +1,6 @@
 import mongoose from "mongoose";
+import bcrypt from "bcryptjs"
+import jwt from "jsonwebtoken";
 
 const healthServiceSchema = new mongoose.Schema({
     name: {
@@ -24,12 +26,10 @@ const healthServiceSchema = new mongoose.Schema({
     },
     isApproved: {
         type: Boolean,
-        required: true,
         default: false
     },
     isAvailable: {
-        type: String,
-        required: true,
+        type: Boolean,
         default: false
     },
     description: {
@@ -40,11 +40,9 @@ const healthServiceSchema = new mongoose.Schema({
         type: {
             type: String,
             enum: ["Point"],
-            required: true
-        },        
-        coordinates:{
+        },
+        coordinates: {
             type: [Number],
-            required: true
         }
     },
     regionalLocation: {
@@ -52,6 +50,8 @@ const healthServiceSchema = new mongoose.Schema({
         required: true
     }
 })
+
+healthServiceSchema.index({ geoLocation: '2dsphere' })
 
 healthServiceSchema.methods.createJWT = function () {
     return jwt.sign(
@@ -61,9 +61,11 @@ healthServiceSchema.methods.createJWT = function () {
     )
 }
 
-healthServiceSchema.methods.matchPassword = async function(enteredPassword){
+healthServiceSchema.methods.matchPassword = async function (enteredPassword) {
     return await bcrypt.compare(enteredPassword, this.password);
 }
 
 const healthService = mongoose.model('healthService', healthServiceSchema);
+
+
 export default healthService;
