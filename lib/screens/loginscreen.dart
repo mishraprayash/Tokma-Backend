@@ -23,6 +23,7 @@ class _LoginScreenState extends State<LoginScreen> {
   final _formKey = GlobalKey<FormState>();
 
   String? locationMessage;
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -92,23 +93,30 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(
-                  onPressed: () async {
-                    if (_formKey.currentState!.validate()) {
-                      Position? position =
-                          await LocationServices.getCurrentLocation();
-                      if (position != null) {
-                        _handleLogin();
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(
-                            content: Text(
-                                'Location permissions are required for login.'),
-                          ),
-                        );
-                      }
-                    }
-                  },
-                  child: Text('Login as $_userType'),
+                  onPressed: _isLoading
+                      ? null
+                      : () async {
+                          if (_formKey.currentState!.validate()) {
+                            Position? position =
+                                await LocationServices.getCurrentLocation();
+                            if (position != null) {
+                              setState(() {
+                                _isLoading = true;
+                              });
+                              _handleLogin();
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                SnackBar(
+                                  content: Text(
+                                      'Location permissions are required for login.'),
+                                ),
+                              );
+                            }
+                          }
+                        },
+                  child: _isLoading
+                      ? CircularProgressIndicator(color: Colors.white)
+                      : Text('Login as $_userType'),
                 ),
                 const SizedBox(height: 15),
                 Padding(
@@ -161,10 +169,26 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         body: jsonEncode(credentials),
       );
-      print(response);
+      // Print the full response for debugging
+      print('Response status: ${response.statusCode}');
+      print('Response body: ${response.body}');
+
+      if (!mounted) return; // Ensure the widget is still mounted
 
       if (response.statusCode == 200) {
         await dbHelper.updateState(true, _userType);
+
+        // Print the success message
+        print('Login successful for $_userType');
+        String jsonresponse = response.body;
+        Map<String, dynamic> parsedJson = jsonDecode(jsonresponse);
+
+        final String? token = parsedJson['token']; // Correct header key
+        if (token != null) {
+          DatabaseHelper dbHelper = DatabaseHelper();
+          await dbHelper.insertSession(token);
+        }
+
         Navigator.pushReplacementNamed(context,
             _userType == 'Tourist' ? '/homefortourist' : '/homeforlocalguide');
       } else {
@@ -175,9 +199,17 @@ class _LoginScreenState extends State<LoginScreen> {
       }
     } catch (e) {
       print('Error: $e');
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('An error occurred. Please try again.')),
-      );
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('An error occurred. Please try again.')),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 }

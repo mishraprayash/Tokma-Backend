@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:yatri/screens/emergencyscreen.dart';
-import 'package:yatri/screens/foodandlodgescreen.dart';
-import 'package:yatri/screens/healthservices.dart';
-import 'package:yatri/screens/hireguidescreen.dart';
-import 'package:yatri/screens/homescreenforlocalguide.dart';
-import 'package:yatri/screens/homescreenfortourist.dart';
+import 'package:yatri/screens/tourists/foodandlodgescreen.dart';
+import 'package:yatri/screens/tourists/healthservices.dart';
+import 'package:yatri/screens/tourists/localguidescreen.dart';
+import 'package:yatri/screens/local%20guide/homescreenforlocalguide.dart';
+import 'package:yatri/screens/tourists/homescreenfortourist.dart';
 import 'package:yatri/screens/loginscreen.dart';
-import 'package:yatri/screens/profile.dart';
+import 'package:yatri/screens/tourists/profile.dart';
 import 'package:yatri/screens/signupscreen.dart';
 import 'package:yatri/screens/splashscreen.dart';
+import 'package:yatri/screens/tourists/recommendedactivitiesscreen.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -33,8 +33,8 @@ class MyApp extends StatelessWidget {
         '/homefortourist': (context) => const HomeScreenForTourist(),
         '/homeforlocalguide': (context) => const HomeScreenForLocalGuide(),
         '/foodlodge': (context) => const FoodLodgeScreen(),
-        '/emergency': (context) => const EmergencyScreen(),
-        '/hireguide': (context) => const HireGuideScreen(),
+        '/activities': (context) => const RecommendedActivitiesScreen(),
+        '/localguide': (context) => const HireGuideScreen(),
         '/login': (context) => const LoginScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/signup': (context) => const SignUpScreen(),

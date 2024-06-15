@@ -21,10 +21,10 @@ class _SideMenuListState extends State<SideMenuList> {
         children: [
           _buildMenuItem(Icons.home, 'Home', '/homefortourist'),
           _buildMenuItem(Icons.food_bank_sharp, 'Food & Lodge', '/foodlodge'),
-          _buildMenuItem(Icons.emergency, 'Emergency', '/emergency'),
-          _buildMenuItem(Icons.person, 'Hire Guide', '/hireguide'),
           _buildMenuItem(
               Icons.health_and_safety, 'Health Services', '/healthservices'),
+          _buildMenuItem(Icons.local_activity, 'Activities', '/activities'),
+          _buildMenuItem(Icons.person_pin_circle, 'Local Guide', '/localguide'),
           _buildMenuItem(Icons.person, 'Profile', '/profile'),
           _buildMenuItem(Icons.logout, 'Logout', '/login', isLogout: true),
         ],

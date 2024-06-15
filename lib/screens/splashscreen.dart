@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:yatri/database/db_handler.dart';
 import 'package:yatri/main.dart';
-import 'package:yatri/screens/homescreenfortourist.dart';
-import 'package:yatri/screens/homescreenforlocalguide.dart';
+import 'package:yatri/screens/tourists/homescreenfortourist.dart';
+import 'package:yatri/screens/local%20guide/homescreenforlocalguide.dart';
 import 'package:yatri/screens/signupscreen.dart';
 
 class SplashScreen extends StatefulWidget {

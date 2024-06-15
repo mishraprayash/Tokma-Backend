@@ -1,8 +1,8 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter/material.dart';
 import 'package:yatri/main.dart';
-import 'package:yatri/screens/signupscreenforlocalguide.dart';
-import 'package:yatri/screens/signupscreenfortourist.dart';
+import 'package:yatri/screens/local%20guide/signupscreenforlocalguide.dart';
+import 'package:yatri/screens/tourists/signupscreenfortourist.dart';
 
 class SignUpScreen extends StatelessWidget {
   const SignUpScreen({super.key});

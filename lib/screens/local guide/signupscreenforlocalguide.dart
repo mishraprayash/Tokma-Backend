@@ -16,7 +16,7 @@ class _SignUpScreenForLocalGuideState extends State<SignUpScreenForLocalGuide> {
   final TextEditingController _lastNameController = TextEditingController();
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _contactNoController = TextEditingController();
-  final TextEditingController _countryController = TextEditingController();
+  final TextEditingController _locationController = TextEditingController();
   final TextEditingController _ageController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
   final TextEditingController _descriptionController = TextEditingController();
@@ -55,7 +55,7 @@ class _SignUpScreenForLocalGuideState extends State<SignUpScreenForLocalGuide> {
               _buildTextField(_contactNoController, 'Contact Number',
                   inputType: TextInputType.phone),
               const SizedBox(height: 10),
-              _buildTextField(_countryController, 'Country'),
+              _buildTextField(_locationController, 'Country'),
               const SizedBox(height: 10),
               _buildDropdownField(),
               const SizedBox(height: 10),
@@ -198,7 +198,7 @@ class _SignUpScreenForLocalGuideState extends State<SignUpScreenForLocalGuide> {
         'lastName': _lastNameController.text,
         'email': _emailController.text,
         'contactNo': _contactNoController.text,
-        'location': _countryController.text,
+        'location': _locationController.text,
         'gender': _genderValue,
         'age': int.parse(_ageController.text),
         'password': _passwordController.text,

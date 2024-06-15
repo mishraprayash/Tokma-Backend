@@ -1,7 +1,13 @@
+import 'dart:async';
+import 'dart:convert';
 import 'dart:developer';
+import 'package:http/http.dart' as http;
 import 'package:geolocator/geolocator.dart';
+import 'package:yatri/database/db_handler.dart';
 
 class LocationServices {
+  StreamSubscription<Position>? _positionStream;
+
   static Future<Position?> getCurrentLocation() async {
     bool serviceEnabled;
     LocationPermission permission;
@@ -41,5 +47,46 @@ class LocationServices {
       log('Error occurred while getting location: $e');
       return null;
     }
+  }
+
+  void getLocationUpdates() {
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 10,
+    );
+
+    _positionStream =
+        Geolocator.getPositionStream(locationSettings: locationSettings)
+            .listen((Position position) async {
+      try {
+        String url = 'https://tokma.onrender.com/api/tourist/update-location';
+        Map<String, dynamic> userData = {
+          'lat': position.latitude,
+          'lon': position.longitude
+        };
+        DatabaseHelper dbHelper = DatabaseHelper();
+        String? token = await dbHelper.getSession();
+        if (token != null) {
+          await http.post(
+            Uri.parse(url),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              'Authorization': 'Bearer $token'
+            },
+            body: jsonEncode(userData),
+          );
+          print(
+              'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+        } else {
+          log('Error: No token available');
+        }
+      } catch (e) {
+        log('Error occurred while updating location: $e');
+      }
+    });
+  }
+
+  void stopListening() {
+    _positionStream?.cancel();
   }
 }

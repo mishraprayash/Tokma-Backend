@@ -32,72 +32,41 @@ class DatabaseHelper {
   ''');
     await db.execute('''
     CREATE TABLE session (
-      userid TEXT,
-      cookie TEXT
-    )
-  ''');
-    await db.execute('''
-      CREATE TABLE touristsdetails (
-        id INTEGER PRIMARY KEY AUTOINCREMENT,
-        fname TEXT,
-        lname TEXT,
-        email TEXT,
-        phnumber TEXT,
-        country TEXT,
-        gender TEXT,
-        age TEXT,
-        password TEXT,
-        emergencycontact TEXT,
-        emergencyemail TEXT
-      )
-    ''');
-    await db.execute('''
-    CREATE TABLE localguidedetails (
-      fname TEXT,
-      lname TEXT,
-      email TEXT,
-      phnumber TEXT,
-      country TEXT,
-      gender TEXT,
-      age TEXT,
-      password TEXT,
-      province TEXT,
-      district TEXT,
-      placeName TEXT
+      sessionId INTEGER PRIMARY KEY AUTOINCREMENT,
+      authorization TEXT
     )
   ''');
   }
 
-  Future<void> insertTouristDetails(Map<String, dynamic> details) async {
+  Future<void> insertSession(String authorization) async {
     final Database db = await database;
-    await db.insert('touristsdetails', details);
-  }
-
-  Future<Map<String, dynamic>> getTouristDetails() async {
-    final Database db = await database;
-    List<Map<String, dynamic>> results = await db.query('touristsdetails');
-
-    if (results.isNotEmpty) {
-      return results.first;
+    // Check if there is any existing session row
+    List<Map<String, dynamic>> existingRows = await db.query('session');
+    if (existingRows.isEmpty) {
+      // If no rows exist, insert a new row
+      Map<String, dynamic> row = {'authorization': authorization};
+      await db.insert('session', row);
     } else {
-      throw Exception('Tourist details not found');
+      // If a row exists, update the existing row
+      Map<String, dynamic> row = {'authorization': authorization};
+      await db.update('session', row);
     }
   }
 
-  Future<void> insertLocalGuideDetails(Map<String, dynamic> details) async {
+  Future<String?> getSession() async {
     final Database db = await database;
-    await db.insert('localguidedetails', details);
-  }
-
-  Future<Map<String, dynamic>> getLocalGuideDetails() async {
-    final Database db = await database;
-    List<Map<String, dynamic>> results = await db.query('localguidedetails');
+    List<Map<String, dynamic>> results = await db.query('session', limit: 1);
 
     if (results.isNotEmpty) {
-      return results.first;
+      return results.first['authorization'] as String?;
     } else {
-      throw Exception('Local guide details not found');
+      return null; // Return null if no session row is found
     }
+  }
+
+  Future<void> clearSession() async {
+    final db = await database;
+    await db.delete('sessions');
   }
 
   Future<void> updateState(bool idRequested, String userType) async {
