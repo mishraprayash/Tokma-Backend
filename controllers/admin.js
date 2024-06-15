@@ -4,7 +4,7 @@ import Guide from "../models/guideModel.js"
 import Tourist from "../models/touristModel.js"
 import mongoose from "mongoose"
 import healthService from "../models/healthserviceModel.js"
-
+import rule from "../models/rulebook.js"
 // register 
 export const register = async (req, res, next) => {
     try {
@@ -142,14 +142,14 @@ export const rejectHealthService = async (req, res, next) => {
 // fetchDashboardInfo for admin
 export const fetchDashboardInfo = async (req, res, next) => {
     try {
-        
-        const pendingGuides = await Guide.find({ isApproved: false },{password:false})
-        const guideCount = await Guide.countDocuments({ isApproved: true})
+
+        const pendingGuides = await Guide.find({ isApproved: false }, { password: false })
+        const guideCount = await Guide.countDocuments({ isApproved: true })
         const touristCount = await Tourist.countDocuments()
-        const pendingHealthService = await healthService.find({ isApproved: false },{_id:true})
+        const pendingHealthService = await healthService.find({ isApproved: false }, { _id: true })
         return res.status(200).json({
             guides: pendingGuides,
-            healthService:pendingHealthService,
+            healthService: pendingHealthService,
             guideCount,
             touristCount,
             totalCount: guideCount + touristCount
@@ -158,5 +158,22 @@ export const fetchDashboardInfo = async (req, res, next) => {
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error })
+    }
+}
+export const setRules = async (req, res, next) => {
+    try {
+        const { name, profile, rules } = req.body;
+        if (!name || !profile || !rules) {
+            return res.status(400).json({ message: "Missing informations" })
+
+        }
+        const createdRule = await rule.create({
+            name, profile, rules
+        })
+        return res.status(200).json({ message: "success", createdRule })
+    }
+    catch (err) {
+        return res.status(500).json({ err: err.message })
+
     }
 }

@@ -2,6 +2,7 @@ import Tourist from "../models/touristModel.js";
 import bcrypt from "bcryptjs";
 import healthService from "../models/healthserviceModel.js";
 import Guide from "../models/guideModel.js";
+import rule from "../models/rulebook.js";
 export const register = async (req, res, next) => {
   try {
     const {
@@ -190,6 +191,16 @@ export const fetchAllService = async (req, res, next) => {
       nearbyGuides, nearbyHealthService
     })
   } catch (error) {
+    res.status(400).json({ err: err.message });
+  }
+}
+export const fetchRules = async (req, res, next) => {
+  try {
+    const { name } = req.body;
+    const ruleFetch = await rule.find({ name: new RegExp(name, 'i') });
+    res.status(200).json({ message: "success", data: ruleFetch });
+  }
+  catch (error) {
     res.status(400).json({ err: err.message });
   }
 }
