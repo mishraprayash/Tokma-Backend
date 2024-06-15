@@ -24,30 +24,43 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       DatabaseHelper dbHelper = DatabaseHelper();
       String? token = await dbHelper.getSession();
-      print("token: $token");
+      print("Token: $token");
 
       if (token != null) {
         var response = await http.get(
-          Uri.parse('https://tokma.onrender.com/api/tourist/tourist-info'),
+          Uri.parse('https://tokma.onrender.com/api/tourist/info'),
           headers: {'Authorization': 'Bearer $token'},
         );
-        print("response: $response");
+        print("Response status: ${response.statusCode}");
+        print("Response body: ${response.body}");
 
         if (response.statusCode == 200) {
+          Map<String, dynamic> responseData = jsonDecode(response.body);
           setState(() {
-            Map<String, dynamic> responseData = jsonDecode(response.body);
             _touristDetails = responseData['touristDetails'];
-            print("touristsdetails: $_touristDetails");
+            print("Tourist Details: $_touristDetails");
             _isLoading = false;
           });
         } else {
           print('Failed to load profile: ${response.body}');
+          setState(() {
+            _isLoading = false;
+            _touristDetails = null;
+          });
         }
       } else {
         print('No session found');
+        setState(() {
+          _isLoading = false;
+          _touristDetails = null;
+        });
       }
     } catch (e) {
       print('Error fetching tourist details: $e');
+      setState(() {
+        _isLoading = false;
+        _touristDetails = null;
+      });
     }
   }
 

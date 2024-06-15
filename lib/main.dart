@@ -10,6 +10,7 @@ import 'package:yatri/screens/tourists/profile.dart';
 import 'package:yatri/screens/signupscreen.dart';
 import 'package:yatri/screens/splashscreen.dart';
 import 'package:yatri/screens/tourists/recommendedactivitiesscreen.dart';
+import 'package:yatri/screens/tourists/rulebookscreen.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
@@ -38,6 +39,7 @@ class MyApp extends StatelessWidget {
         '/login': (context) => const LoginScreen(),
         '/profile': (context) => const ProfileScreen(),
         '/signup': (context) => const SignUpScreen(),
+        '/rulebook': (context) => const RuleBookScreen(),
         '/healthservices': (context) => const HealthServicesScreen(),
       },
       title: 'Tokma',

@@ -169,24 +169,28 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         body: jsonEncode(credentials),
       );
-      // Print the full response for debugging
+     
       print('Response status: ${response.statusCode}');
       print('Response body: ${response.body}');
 
-      if (!mounted) return; // Ensure the widget is still mounted
+      if (!mounted) return;
 
       if (response.statusCode == 200) {
         await dbHelper.updateState(true, _userType);
 
-        // Print the success message
+       
         print('Login successful for $_userType');
         String jsonresponse = response.body;
         Map<String, dynamic> parsedJson = jsonDecode(jsonresponse);
 
-        final String? token = parsedJson['token']; // Correct header key
+        final String? token = parsedJson['token'];
         if (token != null) {
           DatabaseHelper dbHelper = DatabaseHelper();
-          await dbHelper.insertSession(token);
+          if (_userType == 'Tourist') {
+            await dbHelper.insertSession(token);
+          } else {
+            await dbHelper.insertGuideSession(token);
+          }
         }
 
         Navigator.pushReplacementNamed(context,
@@ -194,7 +198,7 @@ class _LoginScreenState extends State<LoginScreen> {
       } else {
         print('Login Failed: ${response.statusCode} - ${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text('Login Failed: ${response.body}')),
+          SnackBar(content: Text('Incorrect Email and Password')),
         );
       }
     } catch (e) {

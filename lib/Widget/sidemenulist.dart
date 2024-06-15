@@ -25,6 +25,7 @@ class _SideMenuListState extends State<SideMenuList> {
               Icons.health_and_safety, 'Health Services', '/healthservices'),
           _buildMenuItem(Icons.local_activity, 'Activities', '/activities'),
           _buildMenuItem(Icons.person_pin_circle, 'Local Guide', '/localguide'),
+          _buildMenuItem(Icons.rule_folder, 'Rule Book', '/rulebook'),
           _buildMenuItem(Icons.person, 'Profile', '/profile'),
           _buildMenuItem(Icons.logout, 'Logout', '/login', isLogout: true),
         ],

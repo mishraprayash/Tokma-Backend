@@ -86,6 +86,47 @@ class LocationServices {
     });
   }
 
+  void guideLocationUpdates() {
+    final LocationSettings locationSettings = LocationSettings(
+      accuracy: LocationAccuracy.high,
+      distanceFilter: 1,
+    );
+
+    _positionStream =
+        Geolocator.getPositionStream(locationSettings: locationSettings)
+            .listen((Position position) async {
+      try {
+        String url = 'https://tokma.onrender.com/api/guide/update-availability';
+        Map<String, dynamic> userData = {
+          'lat': position.latitude,
+          'lon': position.longitude
+        };
+        print("jsonEncode: $userData");
+        DatabaseHelper dbHelper = DatabaseHelper();
+        String? token = await dbHelper.getGuideSession();
+        if (token != null) {
+          await http.post(
+            Uri.parse(url),
+            headers: <String, String>{
+              'Content-Type': 'application/json; charset=UTF-8',
+              'Authorization': 'Bearer $token'
+            },
+            body: jsonEncode(userData),
+          );
+          print(
+              'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
+        } else {
+          log('Error: No token available');
+        }
+      } catch (e) {
+        log('Error occurred while updating location: $e');
+      }
+    });
+    Future.delayed(Duration(seconds: 5), () {
+      _positionStream?.cancel();
+    });
+  }
+
   void stopListening() {
     _positionStream?.cancel();
   }

@@ -36,6 +36,12 @@ class DatabaseHelper {
       authorization TEXT
     )
   ''');
+    await db.execute('''
+    CREATE TABLE guidesession (
+      sessionId INTEGER PRIMARY KEY AUTOINCREMENT,
+      authorization TEXT
+    )
+  ''');
   }
 
   Future<void> insertSession(String authorization) async {
@@ -53,6 +59,21 @@ class DatabaseHelper {
     }
   }
 
+  Future<void> insertGuideSession(String authorization) async {
+    final Database db = await database;
+    // Check if there is any existing session row
+    List<Map<String, dynamic>> existingRows = await db.query('guidesession');
+    if (existingRows.isEmpty) {
+      // If no rows exist, insert a new row
+      Map<String, dynamic> row = {'authorization': authorization};
+      await db.insert('guidesession', row);
+    } else {
+      // If a row exists, update the existing row
+      Map<String, dynamic> row = {'authorization': authorization};
+      await db.update('guidesession', row);
+    }
+  }
+
   Future<String?> getSession() async {
     final Database db = await database;
     List<Map<String, dynamic>> results = await db.query('session', limit: 1);
@@ -64,9 +85,16 @@ class DatabaseHelper {
     }
   }
 
-  Future<void> clearSession() async {
-    final db = await database;
-    await db.delete('sessions');
+  Future<String?> getGuideSession() async {
+    final Database db = await database;
+    List<Map<String, dynamic>> results =
+        await db.query('guidesession', limit: 1);
+
+    if (results.isNotEmpty) {
+      return results.first['authorization'] as String?;
+    } else {
+      return null; // Return null if no session row is found
+    }
   }
 
   Future<void> updateState(bool idRequested, String userType) async {

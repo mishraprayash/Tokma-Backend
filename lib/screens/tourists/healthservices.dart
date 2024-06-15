@@ -1,8 +1,9 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
-import 'package:yatri/Model/hospital.dart';
+import 'package:yatri/Widget/sidemenulist.dart';
 import 'package:yatri/database/db_handler.dart';
+import 'package:yatri/main.dart';
 
 class HealthServicesScreen extends StatefulWidget {
   const HealthServicesScreen({super.key});
@@ -13,8 +14,8 @@ class HealthServicesScreen extends StatefulWidget {
 
 class _HealthServicesScreenState extends State<HealthServicesScreen> {
   final TextEditingController _searchController = TextEditingController();
-  List<HealthService> healthServices = [];
-  List<HealthService> filteredHealthServices = [];
+  List<Map<String, dynamic>> healthServices = [];
+  List<Map<String, dynamic>> filteredHealthServices = [];
   bool _isLoading = true;
 
   @override
@@ -28,21 +29,29 @@ class _HealthServicesScreenState extends State<HealthServicesScreen> {
     try {
       DatabaseHelper dbHelper = DatabaseHelper();
       String? token = await dbHelper.getSession();
-      print("token: $token");
+      print("Token: $token");
+
       final response = await http.get(
         Uri.parse(
             'https://tokma.onrender.com/api/tourist/nearby-healthservice'),
         headers: {'Authorization': 'Bearer $token'},
       );
-      print("Response: $response");
+
+      print("Response status: ${response.statusCode}");
       if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        setState(() {
-          healthServices =
-              data.map((item) => HealthService.fromJson(item)).toList();
-          filteredHealthServices = healthServices;
-          _isLoading = false;
-        });
+        final data = json.decode(response.body);
+        if (data != null && data['locations'] != null) {
+          setState(() {
+            healthServices = List<Map<String, dynamic>>.from(data['locations']);
+            filteredHealthServices = healthServices;
+            _isLoading = false;
+          });
+        } else {
+          print('No health services found in the response.');
+          setState(() {
+            _isLoading = false;
+          });
+        }
       } else {
         print('Failed to load health services: ${response.body}');
         setState(() {
@@ -61,7 +70,7 @@ class _HealthServicesScreenState extends State<HealthServicesScreen> {
     final query = _searchController.text.toLowerCase();
     setState(() {
       filteredHealthServices = healthServices.where((service) {
-        final name = service.name.toLowerCase();
+        final name = service['name']?.toString().toLowerCase() ?? '';
         return name.contains(query);
       }).toList();
     });
@@ -76,69 +85,148 @@ class _HealthServicesScreenState extends State<HealthServicesScreen> {
 
   @override
   Widget build(BuildContext context) {
+    mq = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
-        titleSpacing: 0,
-        title: const Text(
-          "Health Services",
-          style: TextStyle(color: Colors.white),
-        ),
+        actions: [
+          SizedBox(
+            width: mq.width * .02,
+          ),
+          SizedBox(
+            width: mq.width * 0.86,
+            height: mq.height * 0.05,
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: 'Search Health Services...',
+                border: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(8.0),
+                  borderSide: BorderSide.none,
+                ),
+                filled: true,
+                fillColor: Colors.grey[200],
+                contentPadding:
+                    const EdgeInsets.symmetric(vertical: 0, horizontal: 16.0),
+                suffixIcon: const Icon(Icons.search),
+              ),
+            ),
+          ),
+          SizedBox(
+            width: mq.width * .02,
+          ),
+        ],
         iconTheme: const IconThemeData(color: Colors.white),
+      ),
+      drawer: const Drawer(
+        elevation: 0,
+        shape: RoundedRectangleBorder(side: BorderSide.none),
+        child: SideMenuList(),
       ),
       body: Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            TextField(
-              controller: _searchController,
-              decoration: InputDecoration(
-                hintText: 'Search health services...',
-                prefixIcon: const Icon(Icons.search),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(8.0),
+            Container(
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.circular(30.0),
+              ),
+              padding: const EdgeInsets.all(16.0),
+              child: ShaderMask(
+                shaderCallback: (bounds) => const LinearGradient(
+                  colors: [Color.fromARGB(255, 126, 46, 46), Colors.blueAccent],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
+                ).createShader(bounds),
+                child: const Text(
+                  "Find Health Services",
+                  style: TextStyle(
+                    fontSize: 24.0,
+                    color: Colors.white,
+                  ),
+                  textAlign: TextAlign.center,
                 ),
               ),
             ),
-            const SizedBox(height: 10),
-            const Text(
-              'Nearest Health Services',
-              style: TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.bold,
+            const SizedBox(height: 8.0),
+            const Padding(
+              padding: EdgeInsets.symmetric(vertical: 5, horizontal: 50),
+              child: Text(
+                "\"Discover the best health services in your area.\"",
+                style: TextStyle(
+                  fontSize: 14.0,
+                  fontWeight: FontWeight.w500,
+                  fontStyle: FontStyle.italic,
+                ),
               ),
             ),
-            const SizedBox(height: 10),
+            const Divider(color: Colors.black45),
+            const SizedBox(height: 10.0),
+            const Text(
+              "Health Services available in your region",
+              style: TextStyle(fontSize: 16.0, fontWeight: FontWeight.bold),
+            ),
+            const SizedBox(height: 16.0),
             Expanded(
               child: _isLoading
                   ? const Center(child: CircularProgressIndicator())
                   : filteredHealthServices.isNotEmpty
-                      ? ListView.builder(
+                      ? GridView.builder(
+                          gridDelegate:
+                              const SliverGridDelegateWithFixedCrossAxisCount(
+                            crossAxisCount: 2,
+                            mainAxisSpacing: 16.0,
+                            crossAxisSpacing: 16.0,
+                            childAspectRatio: 0.75,
+                          ),
                           itemCount: filteredHealthServices.length,
                           itemBuilder: (context, index) {
                             final healthService = filteredHealthServices[index];
-                            return Card(
-                              margin: const EdgeInsets.symmetric(vertical: 10),
-                              child: ListTile(
-                                leading: CircleAvatar(
-                                  radius: 25,
-                                  backgroundImage: healthService
-                                          .profileImg.isNotEmpty
-                                      ? NetworkImage(healthService.profileImg)
-                                      : null,
-                                  child: healthService.profileImg.isEmpty
-                                      ? const Icon(Icons.person)
-                                      : null,
-                                ),
-                                title: Text(healthService.name),
-                                subtitle: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                            return Container(
+                              padding: const EdgeInsets.all(16.0),
+                              decoration: BoxDecoration(
+                                color: Colors.white,
+                                border: Border.all(color: Colors.grey),
+                                borderRadius: BorderRadius.circular(8.0),
+                              ),
+                              child: SingleChildScrollView(
+                                child: Column(
                                   children: [
-                                    const SizedBox(height: 5),
-                                    Text('Contact: ${healthService.contactNo}'),
-                                    const SizedBox(height: 5),
-                                    Text(
-                                        'Location: ${healthService.regionalLocation}'),
+                                    CircleAvatar(
+                                      radius: 30,
+                                      backgroundColor: Colors.grey[300],
+                                      backgroundImage:
+                                          healthService['profileImg'] != null
+                                              ? NetworkImage(
+                                                  healthService['profileImg'])
+                                              : null,
+                                      child: healthService['profileImg'] == null
+                                          ? const Icon(Icons.person,
+                                              size: 30, color: Colors.grey)
+                                          : null,
+                                    ),
+                                    const SizedBox(height: 8.0),
+                                    Text("${healthService['name']}",
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w600)),
+                                    const SizedBox(height: 16.0),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                          "Contact: ${healthService['contactNo']}",
+                                          style:
+                                              const TextStyle(fontSize: 16.0)),
+                                    ),
+                                    Align(
+                                      alignment: Alignment.centerLeft,
+                                      child: Text(
+                                          "Location: ${healthService['regionalLocation']}",
+                                          style:
+                                              const TextStyle(fontSize: 16.0)),
+                                    ),
                                   ],
                                 ),
                               ),
