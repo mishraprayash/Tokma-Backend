@@ -3,8 +3,8 @@ import Guide from "../models/guideModel.js"
 import bcrypt from "bcryptjs"
 
 export const register = async (req, res, next) => {
-  const { firstName, lastName, contactNo, gender, age, location, email, password, lat, long,description } = req.body;
-  if (!firstName || !lastName || !contactNo || !gender || !age || !location || !email || !password || !description || !lat || !long) {
+  const { firstName, lastName, contactNo, gender, age, location, email, password, description } = req.body;
+  if (!firstName || !lastName || !contactNo || !gender || !age || !location || !email || !password || !description) {
     return res.status(400).json({ message: "Missing informations" })
   }
   const user = await Guide.findOne({ email })
@@ -14,10 +14,7 @@ export const register = async (req, res, next) => {
   const hashedPassword = await bcrypt.hash(password, 10)
 
   const guide = new Guide({
-    firstName, lastName, contactNo, gender, age, email, password: hashedPassword, regionalLocation: location, geoLocation: {
-      type: "Point",
-      coordinates: [long, lat]
-    }
+    firstName, lastName, contactNo, gender, age, email, password: hashedPassword, regionalLocation: location, description
   })
   await guide.save();
   return res.status(200).json({ message: "Register Success", guide })
@@ -39,10 +36,6 @@ export const login = async (req, res, next) => {
     }
     // remaining to handle create session here
     const token = guide.createJWT();
-    // res.cookie("token", token, {
-    //   httpOnly: true,
-    //   maxAge: 24 * 60 * 60 * 1000, 
-    // });
     return res.status(200).json({ message: "Login Success", token })
   } catch (error) {
     console.log(error);
@@ -53,7 +46,7 @@ export const login = async (req, res, next) => {
 export const fetchDashboardInfo = async (req, res, next) => {
   try {
     const guide = await Guide.findById(
-      { id: req.user.id },
+      req.user.id,
       { password: false }
     );
     return res.status(200).json({ guide })
@@ -65,12 +58,15 @@ export const fetchDashboardInfo = async (req, res, next) => {
 
 export const updateAvailability = async (req, res, next) => {
   try {
-    const { lat, long } = req.body
-    const guide = await Guide.findById(req.user.id)
+    const { lat, lon } = req.body
+    console.log(req.user)
+    const guide = await Guide.findOne({ email: req.user.email })
     const availableStatus = guide.isAvailable
     guide.isAvailable = !availableStatus
-    guide.geoLocation.coordinates = [long, lat]
+    guide.geoLocation.type="Point"
+    guide.geoLocation.coordinates = [lon, lat]
     await guide.save();
+    console.log(guide)
     return res.status(200).json({ availability:`${guide.isAvailable}` })
   } catch (error) {
     console.log(error);
