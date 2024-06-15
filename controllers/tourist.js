@@ -174,7 +174,7 @@ export const fetchAllService = async (req, res, next) => {
           $maxDistance: 1000, //1000 m =1km
         },
       },
-      isApproved: true, isAvailable: true
+      // isApproved: true, isAvailable: true
     },).limit(3);
     const nearbyHealthService = await healthService.find({
       geoLocation: {

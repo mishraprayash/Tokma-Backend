@@ -1,7 +1,7 @@
 import express from "express";
 const router = express.Router();
 
-import { register, login, fetchDashboardInfo } from "../controllers/foodandlodging.js";
+import { register, login, fetchDashboardInfo } from "../controllers/foodingandlodging.js";
 
 import { isAuthenticated } from "../middleware/auth.js";
 

@@ -8,7 +8,9 @@ import guideRoutes from "./routes/guideRoutes.js"
 import adminRoutes from "./routes/adminRoutes.js"
 import touristRoutes from "./routes/touristRoutes.js"
 import healthServiceRoutes from "./routes/healthServiceRoutes.js"
+import foodandlodgingRoutes from "./routes/foodandlodgingroute.js"
 import notFoundMiddleware from "./middleware/not-found.js"
+
 
 // dotenv configuration
 config();
@@ -30,6 +32,7 @@ app.use('/api/guide', guideRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/tourist', touristRoutes);
 app.use('/api/healthservice', healthServiceRoutes)
+app.use('/api/foodandlodging',foodandlodgingRoutes)
 
 const PORT = process.env.PORT || 3001
 

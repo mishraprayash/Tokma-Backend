@@ -46,12 +46,6 @@ export const login = async (req, res, next) => {
         }
         // remaining to handle create session here 
         const token = admin.createJWT();
-        // res.cookie('token', token, {
-        //     httpOnly: true,
-        //     maxAge: 24 * 60 * 60 * 100,
-
-        // });
-
         return res.status(200).json({ message: "Login Success", token });
 
     } catch (error) {
@@ -142,11 +136,10 @@ export const rejectHealthService = async (req, res, next) => {
 // fetchDashboardInfo for admin
 export const fetchDashboardInfo = async (req, res, next) => {
     try {
-
         const pendingGuides = await Guide.find({ isApproved: false }, { password: false })
         const guideCount = await Guide.countDocuments({ isApproved: true })
         const touristCount = await Tourist.countDocuments()
-        const pendingHealthService = await healthService.find({ isApproved: false }, { _id: true })
+        const pendingHealthService = await healthService.find({ isApproved: false }, { password: false })
         return res.status(200).json({
             guides: pendingGuides,
             healthService: pendingHealthService,
@@ -154,7 +147,6 @@ export const fetchDashboardInfo = async (req, res, next) => {
             touristCount,
             totalCount: guideCount + touristCount
         })
-
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error })
@@ -165,7 +157,6 @@ export const setRules = async (req, res, next) => {
         const { name, profile, rules } = req.body;
         if (!name || !profile || !rules) {
             return res.status(400).json({ message: "Missing informations" })
-
         }
         const createdRule = await rule.create({
             name, profile, rules
@@ -174,6 +165,6 @@ export const setRules = async (req, res, next) => {
     }
     catch (err) {
         return res.status(500).json({ err: err.message })
-
     }
 }
+

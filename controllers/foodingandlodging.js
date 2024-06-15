@@ -1,4 +1,5 @@
-import foodAndLodging from "../models/foodandlodgingModel.js";
+import foodAndLodging from "../models/foodandlodgingModel.js"
+import bcrypt from "bcryptjs"
 export const register = async (req, res, next) => {
   try {
     const {
@@ -8,14 +9,16 @@ export const register = async (req, res, next) => {
       country,
       description,
       password,
+      location
     } = req.body;
     if (
-        !name||
-        !email||
-        !contactNo||
-        !country||
-        !description||
-        !password
+      !name ||
+      !email ||
+      !contactNo ||
+      !country ||
+      !description ||
+      !password ||
+      !location
     ) {
       return res.status(400).json({ message: "Missing informations" });
     }
@@ -25,12 +28,13 @@ export const register = async (req, res, next) => {
     }
     const hashedPassword = await bcrypt.hash(password, 10);
     const foodandlodging = await foodAndLodging.create({
-        name,
-        email,
-        contactNo,
-        country,
-        description,
-        password: hashedPassword,
+      name,
+      email,
+      contactNo,
+      country,
+      description,
+      password: hashedPassword,
+      regionalLocation: location
     });
     return res.status(200).json({ message: "Registered Successfully" });
   } catch (error) {
@@ -67,14 +71,27 @@ export const login = async (req, res, next) => {
 };
 
 export const fetchDashboardInfo = async (req, res, next) => {
-    try {
-      const guide = await foodAndLodging.findById(
-        { id: req.user.id },
-        { password: false }
-      );
-      return res.status(200).json({ guide })
-    } catch (error) {
-      console.log(error);
-      return res.status(500).json({ error })
-    }
-  };
+  try {
+    const guide = await foodAndLodging.findById(
+      { _id: req.user.id },
+      { password: false }
+    );
+    return res.status(200).json({ guide })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error })
+  }
+};
+
+export const updateAvailability = async (req, res, next) => {
+  try {
+    const foodAndLodgeService = await foodAndLodging.findById({ _id: req.user.id })
+    const availableStatus = foodAndLodgeService.isAvailable
+    foodAndLodgeService.isAvailable = !availableStatus
+    await foodAndLodgeService.save()
+    return res.status(200).json({ availability: `${foodAndLodgeService.isAvailable}` })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error })
+  }
+}
