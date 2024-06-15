@@ -14,9 +14,9 @@ export const isAuthenticated = async (req, res, next) => {
         req.user = decodedToken
         next()
     } catch (error) {
-        if(error instanceof JsonWebTokenError){
-            return res.status(403).json({message:"Unauthorized Access"})
-        }
+        // if(error instanceof JsonWebTokenError){
+        //     return res.status(403).json({message:"Unauthorized Access"})
+        // }
         console.log(error);
         return res.status(500).json({ error });
     }

@@ -49,6 +49,21 @@ const guideSchema = new mongoose.Schema({
   description: {
     type: String,
     required: true
+  },
+  geoLocation: {
+    type: {
+      type: String,
+      enum: ["Point"],
+      required: true
+    },
+    coordinates: {
+      type: [Number],
+      required: true
+    }
+  },
+  regionalLocation: {
+    type: String,
+    required: true
   }
 });
 

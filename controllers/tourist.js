@@ -4,7 +4,6 @@ import bcrypt from "bcryptjs"
 export const register = async (req, res, next) => {
     try {
         const {firstName, lastName, contactNo, country, gender, email, age, password, emergencyEmail, emergencyNumber } = req.body;
-        console.log(req.body)
         if (!firstName || !lastName || !contactNo || !country || !gender || !email || !age || !password || !emergencyEmail || !emergencyNumber) {
             return res.status(400).json({ message: "Missing informations" });
         }
@@ -38,10 +37,8 @@ export const login = async (req, res, next) => {
         const token = tourist.createJWT()
 
         res.cookie('token', token, {
-            httpOnly: false,
-            secure: false,
+            httpOnly: true,
             maxAge: 24 * 60 * 60 * 100,
-            domain: 'http://localhost:3000'
         });
         return res.status(200).json({ message: "Login Success", token });
 

@@ -46,12 +46,11 @@ export const login = async (req, res, next) => {
         }
         // remaining to handle create session here 
         const token = admin.createJWT();
-        res.cookie('token', token, {
-            httpOnly: false,
-            secure: false,
-            maxAge: 24 * 60 * 60 * 100,
-            domain:'http://localhost:3000'
-        });
+        // res.cookie('token', token, {
+        //     httpOnly: true,
+        //     maxAge: 24 * 60 * 60 * 100,
+
+        // });
 
         return res.status(200).json({ message: "Login Success", token });
 
