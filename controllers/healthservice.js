@@ -1,12 +1,12 @@
 import healthService from "../models/healthserviceModel.js"
-
+import bcrypt from "bcryptjs"
 export const register = async (req, res, next) => {
-    const { name, contactNo, email, password, description, long, lat, location } = req.body
-    if (!name || !contactNo || !email || !password || !description || !long || !lat || location) {
+    const { name, contactNo, email, password, description, location } = req.body
+    if (!name || !contactNo || !email || !password || !description || !location) {
         return res.status(400).json({ message: "Missing informations" })
     }
     const user = await healthService.findOne({ email })
-    if (!user) {
+    if (user) {
         return res.status(400).json({ message: "User already exists" })
     }
     const hashedPassword = await bcrypt.hash(password, 10)
@@ -14,10 +14,6 @@ export const register = async (req, res, next) => {
     const healthservice = new healthService({
         name, contactNo, email, description, regionalLocation: location,
         password: hashedPassword,
-        geoLocation: {
-            type: "Point",
-            coordinates: [long, lat]
-        }
     })
     await healthservice.save()
     return res.json({ message: "Register Success", healthservice })
@@ -39,11 +35,7 @@ export const login = async (req, res, next) => {
         }
         // remaining to handle create session here 
         const token = healthservice.createJWT()
-        // res.cookie('token', token, {
-        //     httpOnly: true,
-        //     secure: false,
-        //     maxAge: 24 * 60 * 60 * 1000 // 1 day
-        // })
+
         return res.status(200).json({ message: "Login Success", token })
     } catch (error) {
         console.log(error)
@@ -68,12 +60,14 @@ export const fetchDashboardInfo = async (req, res, next) => {
 export const updateAvailability = async (req, res, next) => {
     try {
         const { lat, lon } = req.body
-        const healthservice = await healthService.findById(req.user.id)
+        const healthservice = await healthService.findOne({ email: req.user.email })
         const status = healthservice.isAvailable
         healthservice.isAvailable = !status
+        healthservice.geoLocation.type = "Point"
         healthservice.geoLocation.coordinates = [lon, lat]
         await healthservice.save()
         return res.status(200).json({ availablility: `${healthservice.isAvailable}` })
+        
     } catch (error) {
         console.log(error)
         return res.status(500).json({ error })
