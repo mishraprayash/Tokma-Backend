@@ -119,7 +119,7 @@ export const nearbyLocalGuides = async (req, res, next) => {
           $maxDistance: 1000, //1000 m =1km
         },
       }, 
-      // isApproved: true, isAvailable: true
+      // isApproved: true, isAvailable: true 
     });
     return res.status(200).json({ message: "Results", nearbyGuides });
   } catch (error) {
@@ -146,9 +146,8 @@ export const updateLocation = async (req, res, next) => {
   const { lat, lon } = req.body;
   try {
     const touristDetails = await Tourist.findOne({ email: req.user.email })
-    console.log(req.user.email)
-    console.log(touristDetails)
-    // touristDetails.geoLocation.type = "Point"
+
+    touristDetails.geoLocation.type = "Point"
     touristDetails.geoLocation.coordinates = [lon, lat];
     await touristDetails.save();
 
