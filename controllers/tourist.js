@@ -93,7 +93,8 @@ export const nearbyHealthServices = async (req, res, next) => {
           },
           $maxDistance: 1000, //1000 m =1km
         },
-      }, isApproved: true, isAvailable: true
+      },
+      //  isApproved: true, isAvailable: true
     });
     return res.status(200).json({ message: "Results", locations });
   } catch (error) {
@@ -117,7 +118,8 @@ export const nearbyLocalGuides = async (req, res, next) => {
           },
           $maxDistance: 1000, //1000 m =1km
         },
-      }, isApproved: true, isAvailable: true
+      }, 
+      // isApproved: true, isAvailable: true
     });
     return res.status(200).json({ message: "Results", nearbyGuides });
   } catch (error) {
@@ -184,7 +186,8 @@ export const fetchAllService = async (req, res, next) => {
           },
           $maxDistance: 1000, //1000 m =1km
         },
-      }, isApproved: true, isAvailable: true
+      }, 
+      // isApproved: true, isAvailable: true
     }).limit(3);
 
     return res.status(200).json({
