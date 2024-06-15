@@ -45,11 +45,11 @@ export const login = async (req, res, next) => {
 
 export const fetchDashboardInfo = async (req, res, next) => {
     try {
-        const guide = await healthService.find({ _id: req.user.id }, { password: false })
+        const healthservice = await healthService.find({ _id: req.user.id }, { password: false })
         if (!guide) {
-            return res.status(400).json({ message: "Guide doesnot exists" })
+            return res.status(400).json({ message: "Service doesnot exists" })
         }
-        return res.status(200).json({ guide })
+        return res.status(200).json({ healthservice })
 
     } catch (error) {
         console.log(error)
