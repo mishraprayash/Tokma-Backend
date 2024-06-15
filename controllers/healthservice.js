@@ -1,22 +1,27 @@
 import healthService from "../models/healthserviceModel.js"
 import bcrypt from "bcryptjs"
 export const register = async (req, res, next) => {
-    const { name, contactNo, email, password, description, location } = req.body
-    if (!name || !contactNo || !email || !password || !description || !location) {
-        return res.status(400).json({ message: "Missing informations" })
-    }
-    const user = await healthService.findOne({ email })
-    if (user) {
-        return res.status(400).json({ message: "User already exists" })
-    }
-    const hashedPassword = await bcrypt.hash(password, 10)
+    try {
+        const { name, contactNo, email, password, description, location } = req.body
+        if (!name || !contactNo || !email || !password || !description || !location) {
+            return res.status(400).json({ message: "Missing informations" })
+        }
+        const user = await healthService.findOne({ email })
+        if (user) {
+            return res.status(400).json({ message: "User already exists" })
+        }
+        const hashedPassword = await bcrypt.hash(password, 10)
 
-    const healthservice = new healthService({
-        name, contactNo, email, description, regionalLocation: location,
-        password: hashedPassword,
-    })
-    await healthservice.save()
-    return res.json({ message: "Register Success", healthservice })
+        const healthservice = new healthService({
+            name, contactNo, email, description, regionalLocation: location,
+            password: hashedPassword,
+        })
+        await healthservice.save()
+        return res.json({ message: "Register Success", healthservice })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error: error.message })
+    }
 }
 
 export const login = async (req, res, next) => {
@@ -39,21 +44,35 @@ export const login = async (req, res, next) => {
         return res.status(200).json({ message: "Login Success", token })
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ error })
+        return res.status(500).json({ error: error.message })
     }
 }
 
 export const fetchDashboardInfo = async (req, res, next) => {
     try {
         const healthservice = await healthService.find({ _id: req.user.id }, { password: false })
-        if (!guide) {
+        if (!healthservice) {
             return res.status(400).json({ message: "Service doesnot exists" })
         }
         return res.status(200).json({ healthservice })
 
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ error })
+        return res.status(500).json({ error: error.message })
+    }
+}
+
+export const fetchIndividualServiceFromTourist = async (req, res, next) => {
+    try {
+        const { id } = req.body
+        const healthservice = await healthService.findOne({ _id: id }, { password: false })
+        if (!healthservice) {
+            return res.status(400).json({ message: "Service doesnot exists" })
+        }
+        return res.status(200).json({ healthservice })
+    } catch (error) {
+        console.log(error)
+        return res.status(500).json({ error: error.message })
     }
 }
 
@@ -67,10 +86,9 @@ export const updateAvailability = async (req, res, next) => {
         healthservice.geoLocation.coordinates = [lon, lat]
         await healthservice.save()
         return res.status(200).json({ availablility: `${healthservice.isAvailable}` })
-        
     } catch (error) {
         console.log(error)
-        return res.status(500).json({ error })
+        return res.status(500).json({ error: error.message })
     }
 }
 

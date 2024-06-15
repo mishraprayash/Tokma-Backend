@@ -78,13 +78,13 @@ export const login = async (req, res, next) => {
 };
 
 export const nearbyHealthServices = async (req, res, next) => {
-  let locations;
+
   try {
     const email = req.user.email;
     const touristDetails = await Tourist.findOne({ email });
     const locat = touristDetails.geoLocation;
     console.log(locat);
-    locations = await healthService.find({
+    const locations = await healthService.find({
       geoLocation: {
         $near: {
           $geometry: {

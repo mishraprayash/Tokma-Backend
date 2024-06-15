@@ -45,13 +45,24 @@ export const login = async (req, res, next) => {
 
 export const fetchDashboardInfo = async (req, res, next) => {
   try {
-    const guide = await Guide.findOne({_id:req.user.id},{ password: false });
+    const guide = await Guide.findOne({ _id: req.user.id }, { password: false });
     return res.status(200).json({ guide })
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error })
   }
 };
+
+export const fetchIndividualServiceFromTourist = async (req, res, next) => {
+  try {
+    const { id } = req.body
+    const guide = await Guide.findOne({ _id: id }, { password: false });
+    return res.status(200).json({ guide })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({ error: error.message })
+  }
+}
 
 export const updateAvailability = async (req, res, next) => {
   try {
@@ -60,11 +71,11 @@ export const updateAvailability = async (req, res, next) => {
     const guide = await Guide.findOne({ email: req.user.email })
     const availableStatus = guide.isAvailable
     guide.isAvailable = !availableStatus
-    guide.geoLocation.type="Point"
+    guide.geoLocation.type = "Point"
     guide.geoLocation.coordinates = [lon, lat]
     await guide.save();
     console.log(guide)
-    return res.status(200).json({ availability:`${guide.isAvailable}` })
+    return res.status(200).json({ availability: `${guide.isAvailable}` })
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error })

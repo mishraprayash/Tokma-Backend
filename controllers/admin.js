@@ -78,21 +78,22 @@ export const approveGuide = async (req, res, next) => {
 // reject guide
 export const rejectGuide = async (req, res, next) => {
     try {
-        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+        const { id } = req.params;
+        if (!mongoose.Types.ObjectId.isValid(id)) {
             return res.status(400).json({ message: "Invalid ID format" });
         }
-        const id = new mongoose.Types.ObjectId(id);
         const guide = await Guide.findById(id);
         if (!guide) {
-            return res.status(400).json({ message: "User doesnot exists" })
+            return res.status(400).json({ message: "User does not exist" });
         }
-        await Guide.deleteOne(id);
-        return res.status(200).json({ message: 'Guide Rejected' })
+        await Guide.deleteOne({ _id: id });
+        return res.status(200).json({ message: 'Guide Rejected' });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ error });
+        return res.status(500).json({ message: 'Server error' });
     }
-}
+};
+
 
 // accept health service
 export const approveHealthService = async (req, res, next) => {
