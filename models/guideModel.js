@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs";
+import jwt from "jsonwebtoken"
 
 const guideSchema = new mongoose.Schema({
   firstName: {
@@ -54,11 +55,9 @@ const guideSchema = new mongoose.Schema({
     type: {
       type: String,
       enum: ["Point"],
-      required: true
     },
     coordinates: {
       type: [Number],
-      required: true
     }
   },
   regionalLocation: {
@@ -66,6 +65,7 @@ const guideSchema = new mongoose.Schema({
     required: true
   }
 });
+guideSchema.index({ geoLocation: '2dsphere' })
 
 guideSchema.methods.createJWT = function () {
   return jwt.sign(
