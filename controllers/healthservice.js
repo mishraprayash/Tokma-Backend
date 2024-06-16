@@ -28,15 +28,15 @@ export const login = async (req, res, next) => {
     try {
         const { email, password } = req.body
         if (!email || !password) {
-            return res.json({ message: "Missing information" })
+            return res.status(400).json({ message: "Missing information" })
         }
         const healthservice = await healthService.findOne({ email })
         if (!healthservice) {
-            return res.json({ message: "User doesnot exists" })
+            return res.status(400).json({ message: "User doesnot exists" })
         }
         const isPasswordMatched = await healthservice.matchPassword(password)
         if (!isPasswordMatched) {
-            return res.json({ message: "User doesnot exist" })
+            return res.status(400).json({ message: "User doesnot exist" })
         }
         // remaining to handle create session here 
         const token = healthservice.createJWT()
