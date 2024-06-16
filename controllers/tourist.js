@@ -199,6 +199,9 @@ export const fetchAllService = async (req, res, next) => {
 export const fetchRules = async (req, res, next) => {
   try {
     const { name } = req.body;
+    if(!name){
+      return res.status(400).json({message:"No name provided"})
+    }
     const ruleFetch = await rule.find({ name: new RegExp(name, 'i') });
     res.status(200).json({ message: "success", data: ruleFetch });
   }

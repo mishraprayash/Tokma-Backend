@@ -1,5 +1,6 @@
 import foodAndLodging from "../models/foodandlodgingModel.js"
 import bcrypt from "bcryptjs"
+
 export const register = async (req, res, next) => {
   try {
     const {
