@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:yatri/Widget/sidemenulist.dart';
 import 'package:yatri/database/db_handler.dart';
 import 'package:yatri/main.dart';
+import 'package:yatri/screens/tourists/details/activitiesdetailscreen.dart';
 
 class RecommendedActivitiesScreen extends StatefulWidget {
   const RecommendedActivitiesScreen({super.key});
@@ -31,7 +32,6 @@ class _RecommendedActivitiesScreenState
     try {
       DatabaseHelper dbHelper = DatabaseHelper();
       String? token = await dbHelper.getSession();
-      print("Token: $token");
 
       final response = await http.get(
         Uri.parse(
@@ -39,7 +39,6 @@ class _RecommendedActivitiesScreenState
         headers: {'Authorization': 'Bearer $token'},
       );
 
-      print("Response status: ${response.statusCode}");
       if (response.statusCode == 200) {
         final List<dynamic> data = jsonDecode(response.body);
         setState(() {
@@ -179,55 +178,67 @@ class _RecommendedActivitiesScreenState
                           itemCount: filteredActivities.length,
                           itemBuilder: (context, index) {
                             final activity = filteredActivities[index];
-                            return Container(
-                              padding: const EdgeInsets.all(16.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 30,
-                                      backgroundColor: Colors.grey[300],
-                                      backgroundImage: activity['profileImg'] !=
-                                              null
-                                          ? NetworkImage(activity['profileImg'])
-                                          : null,
-                                      child: activity['profileImg'] == null
-                                          ? const Icon(Icons.person,
-                                              size: 30, color: Colors.grey)
-                                          : null,
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    ElevatedButton(
-                                      onPressed: () {},
-                                      child: const Text("Join Now"),
-                                    ),
-                                    const SizedBox(height: 16.0),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text("Name: ${activity['name']}",
-                                          style:
-                                              const TextStyle(fontSize: 16.0)),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                          "Contact: ${activity['contactNo']}",
-                                          style:
-                                              const TextStyle(fontSize: 16.0)),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                          "Location: ${activity['regionalLocation']}",
-                                          style:
-                                              const TextStyle(fontSize: 16.0)),
-                                    ),
-                                  ],
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => ActivitieDetailScreen(
+                                        id: activity['_id']),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 30,
+                                        backgroundColor: Colors.grey[300],
+                                        backgroundImage:
+                                            activity['profileImg'] != null
+                                                ? NetworkImage(
+                                                    activity['profileImg'])
+                                                : null,
+                                        child: activity['profileImg'] == null
+                                            ? const Icon(Icons.person,
+                                                size: 30, color: Colors.grey)
+                                            : null,
+                                      ),
+                                      const SizedBox(height: 8.0),
+                                      ElevatedButton(
+                                        onPressed: () {},
+                                        child: const Text("Join Now"),
+                                      ),
+                                      const SizedBox(height: 16.0),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text("Name: ${activity['name']}",
+                                            style: const TextStyle(
+                                                fontSize: 16.0)),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            "Contact: ${activity['contactNo']}",
+                                            style: const TextStyle(
+                                                fontSize: 16.0)),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            "Location: ${activity['regionalLocation']}",
+                                            style: const TextStyle(
+                                                fontSize: 16.0)),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );

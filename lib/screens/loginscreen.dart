@@ -24,6 +24,7 @@ class _LoginScreenState extends State<LoginScreen> {
 
   String? locationMessage;
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -82,8 +83,20 @@ class _LoginScreenState extends State<LoginScreen> {
                   decoration: InputDecoration(
                     labelText: 'Password',
                     border: OutlineInputBorder(),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _isPasswordVisible
+                            ? Icons.visibility
+                            : Icons.visibility_off,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _isPasswordVisible = !_isPasswordVisible;
+                        });
+                      },
+                    ),
                   ),
-                  obscureText: true,
+                  obscureText: !_isPasswordVisible,
                   validator: (value) {
                     if (value == null || value.isEmpty) {
                       return 'Please enter your password';
@@ -169,17 +182,12 @@ class _LoginScreenState extends State<LoginScreen> {
         },
         body: jsonEncode(credentials),
       );
-     
-      print('Response status: ${response.statusCode}');
-      print('Response body: ${response.body}');
 
       if (!mounted) return;
 
       if (response.statusCode == 200) {
         await dbHelper.updateState(true, _userType);
 
-       
-        print('Login successful for $_userType');
         String jsonresponse = response.body;
         Map<String, dynamic> parsedJson = jsonDecode(jsonresponse);
 
@@ -196,13 +204,11 @@ class _LoginScreenState extends State<LoginScreen> {
         Navigator.pushReplacementNamed(context,
             _userType == 'Tourist' ? '/homefortourist' : '/homeforlocalguide');
       } else {
-        print('Login Failed: ${response.statusCode} - ${response.body}');
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('Incorrect Email and Password')),
         );
       }
     } catch (e) {
-      print('Error: $e');
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text('An error occurred. Please try again.')),

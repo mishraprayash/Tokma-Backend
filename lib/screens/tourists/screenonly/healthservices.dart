@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:yatri/Widget/sidemenulist.dart';
 import 'package:yatri/database/db_handler.dart';
 import 'package:yatri/main.dart';
+import 'package:yatri/screens/tourists/details/healthservicedetailscreen.dart';
 
 class HealthServicesScreen extends StatefulWidget {
   const HealthServicesScreen({super.key});
@@ -29,7 +30,6 @@ class _HealthServicesScreenState extends State<HealthServicesScreen> {
     try {
       DatabaseHelper dbHelper = DatabaseHelper();
       String? token = await dbHelper.getSession();
-      print("Token: $token");
 
       final response = await http.get(
         Uri.parse(
@@ -37,7 +37,6 @@ class _HealthServicesScreenState extends State<HealthServicesScreen> {
         headers: {'Authorization': 'Bearer $token'},
       );
 
-      print("Response status: ${response.statusCode}");
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
         if (data != null && data['locations'] != null) {
@@ -184,50 +183,73 @@ class _HealthServicesScreenState extends State<HealthServicesScreen> {
                           itemCount: filteredHealthServices.length,
                           itemBuilder: (context, index) {
                             final healthService = filteredHealthServices[index];
-                            return Container(
-                              padding: const EdgeInsets.all(16.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 30,
-                                      backgroundColor: Colors.grey[300],
-                                      backgroundImage:
-                                          healthService['profileImg'] != null
-                                              ? NetworkImage(
-                                                  healthService['profileImg'])
-                                              : null,
-                                      child: healthService['profileImg'] == null
-                                          ? const Icon(Icons.person,
-                                              size: 30, color: Colors.grey)
-                                          : null,
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    Text("${healthService['name']}",
-                                        style: const TextStyle(
-                                            fontSize: 16.0,
-                                            fontWeight: FontWeight.w600)),
-                                    const SizedBox(height: 16.0),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                          "Contact: ${healthService['contactNo']}",
-                                          style:
-                                              const TextStyle(fontSize: 16.0)),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                          "Location: ${healthService['regionalLocation']}",
-                                          style:
-                                              const TextStyle(fontSize: 16.0)),
-                                    ),
-                                  ],
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        HealthServiceDetailScreen(
+                                            id: healthService['_id']),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      Padding(
+                                        padding: const EdgeInsets.all(4.0),
+                                        child: Container(
+                                          width: double.infinity,
+                                          height:
+                                              120.0, // Adjust the height as per your design
+                                          decoration: BoxDecoration(
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
+                                            image: DecorationImage(
+                                              image: healthService[
+                                                              'profileImg'] !=
+                                                          null &&
+                                                      healthService[
+                                                              'profileImg']
+                                                          .isNotEmpty
+                                                  ? NetworkImage(healthService[
+                                                      'profileImg'])
+                                                  : AssetImage(
+                                                          'assets/default.png')
+                                                      as ImageProvider,
+                                              fit: BoxFit.cover,
+                                            ),
+                                          ),
+                                        ),
+                                      ),
+                                      Text("${healthService['name']}",
+                                          style: const TextStyle(
+                                              fontSize: 16.0,
+                                              fontWeight: FontWeight.w600)),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            "Contact: ${healthService['contactNo']}",
+                                            style: const TextStyle(
+                                                fontSize: 16.0)),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            "Location: ${healthService['regionalLocation']}",
+                                            style: const TextStyle(
+                                                fontSize: 16.0)),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );

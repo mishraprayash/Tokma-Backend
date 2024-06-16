@@ -35,9 +35,7 @@ class _HomeScreenForLocalGuideState extends State<HomeScreenForLocalGuide> {
           Uri.parse('https://tokma.onrender.com/api/guide/dashboard'),
           headers: {'Authorization': 'Bearer $token'},
         );
-        print(response);
-        String responseContent = response.body;
-        print('ResponseBody $responseContent');
+
         if (response.statusCode == 200) {
           setState(() {
             _localGuideDetails = jsonDecode(response.body)['guide'];
@@ -56,8 +54,6 @@ class _HomeScreenForLocalGuideState extends State<HomeScreenForLocalGuide> {
   }
 
   void _logout() async {
-    print("User logged out");
-
     // Clear app state (login status) from SQLite database
     await DatabaseHelper().updateState(false, '');
 

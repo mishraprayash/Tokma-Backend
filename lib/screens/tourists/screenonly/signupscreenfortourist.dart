@@ -26,6 +26,7 @@ class _SignUpScreenForTouristState extends State<SignUpScreenForTourist> {
 
   String? _genderValue;
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -92,8 +93,20 @@ class _SignUpScreenForTouristState extends State<SignUpScreenForTourist> {
       decoration: InputDecoration(
         labelText: label,
         border: const OutlineInputBorder(),
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+              )
+            : null,
       ),
-      obscureText: isPassword,
+      obscureText: isPassword && !_isPasswordVisible,
       keyboardType: inputType,
       validator: (value) {
         if (value == null || value.isEmpty) {

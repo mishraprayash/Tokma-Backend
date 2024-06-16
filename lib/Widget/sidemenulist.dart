@@ -34,8 +34,6 @@ class _SideMenuListState extends State<SideMenuList> {
   }
 
   void _logout() async {
-    print("User logged out");
-
     // Clear app state (login status) from SQLite database
     await _databaseHelper.updateState(false, '');
 

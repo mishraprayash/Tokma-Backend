@@ -24,6 +24,7 @@ class _SignUpScreenForLocalGuideState extends State<SignUpScreenForLocalGuide> {
 
   String? _genderValue;
   bool _isLoading = false;
+  bool _isPasswordVisible = false;
 
   @override
   Widget build(BuildContext context) {
@@ -88,8 +89,20 @@ class _SignUpScreenForLocalGuideState extends State<SignUpScreenForLocalGuide> {
         labelText: label,
         alignLabelWithHint: true,
         border: const OutlineInputBorder(),
+        suffixIcon: isPassword
+            ? IconButton(
+                icon: Icon(
+                  _isPasswordVisible ? Icons.visibility : Icons.visibility_off,
+                ),
+                onPressed: () {
+                  setState(() {
+                    _isPasswordVisible = !_isPasswordVisible;
+                  });
+                },
+              )
+            : null,
       ),
-      obscureText: isPassword,
+      obscureText: isPassword && !_isPasswordVisible,
       keyboardType: inputType,
       maxLines: maxLines,
       validator: (value) {

@@ -24,21 +24,18 @@ class _ProfileScreenState extends State<ProfileScreen> {
     try {
       DatabaseHelper dbHelper = DatabaseHelper();
       String? token = await dbHelper.getSession();
-      print("Token: $token");
 
       if (token != null) {
         var response = await http.get(
           Uri.parse('https://tokma.onrender.com/api/tourist/info'),
           headers: {'Authorization': 'Bearer $token'},
         );
-        print("Response status: ${response.statusCode}");
-        print("Response body: ${response.body}");
 
         if (response.statusCode == 200) {
           Map<String, dynamic> responseData = jsonDecode(response.body);
           setState(() {
             _touristDetails = responseData['touristDetails'];
-            print("Tourist Details: $_touristDetails");
+
             _isLoading = false;
           });
         } else {

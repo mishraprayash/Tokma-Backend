@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
 import 'package:yatri/Widget/sidemenulist.dart';
 import 'package:yatri/database/db_handler.dart';
-import 'package:yatri/main.dart';
+import 'package:yatri/screens/tourists/details/foodlodgedetailsscreen.dart';
 
 class FoodLodgeScreen extends StatefulWidget {
   const FoodLodgeScreen({super.key});
@@ -29,43 +29,48 @@ class _FoodLodgeScreenState extends State<FoodLodgeScreen> {
     try {
       DatabaseHelper dbHelper = DatabaseHelper();
       String? token = await dbHelper.getSession();
-      print("Token: $token");
 
       final response = await http.get(
-        Uri.parse('https://tokma.onrender.com/api/tourist/nearby-food-lodge'),
+        Uri.parse('https://tokma.onrender.com/api/tourist/nearby-foodandlodge'),
         headers: {'Authorization': 'Bearer $token'},
       );
 
-      print("Response status: ${response.statusCode}");
-      if (response.statusCode == 200) {
-        final List<dynamic> data = jsonDecode(response.body);
-        setState(() {
-          foodAndLodges = data.cast<Map<String, dynamic>>();
-          filteredFoodAndLodges = foodAndLodges;
-          _isLoading = false;
-        });
-      } else {
-        print('Failed to load food and lodges: ${response.body}');
+      if (mounted) {
+        if (response.statusCode == 200) {
+          final Map<String, dynamic> data = jsonDecode(response.body);
+          setState(() {
+            foodAndLodges =
+                data['nearbyfoodandlodge'].cast<Map<String, dynamic>>();
+            filteredFoodAndLodges = foodAndLodges;
+            _isLoading = false;
+          });
+        } else {
+          print('Failed to load food and lodges: ${response.body}');
+          setState(() {
+            _isLoading = false;
+          });
+        }
+      }
+    } catch (e) {
+      if (mounted) {
+        print('Error fetching food and lodges: $e');
         setState(() {
           _isLoading = false;
         });
       }
-    } catch (e) {
-      print('Error fetching food and lodges: $e');
-      setState(() {
-        _isLoading = false;
-      });
     }
   }
 
   void _filterFoodAndLodges() {
     final query = _searchController.text.toLowerCase();
-    setState(() {
-      filteredFoodAndLodges = foodAndLodges.where((foodLodge) {
-        final name = foodLodge['name'].toLowerCase();
-        return name.contains(query);
-      }).toList();
-    });
+    if (mounted) {
+      setState(() {
+        filteredFoodAndLodges = foodAndLodges.where((foodLodge) {
+          final name = foodLodge['name'].toLowerCase();
+          return name.contains(query);
+        }).toList();
+      });
+    }
   }
 
   @override
@@ -77,7 +82,7 @@ class _FoodLodgeScreenState extends State<FoodLodgeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    mq = MediaQuery.of(context).size;
+    var mq = MediaQuery.of(context).size;
     return Scaffold(
       appBar: AppBar(
         actions: [
@@ -176,56 +181,63 @@ class _FoodLodgeScreenState extends State<FoodLodgeScreen> {
                           itemCount: filteredFoodAndLodges.length,
                           itemBuilder: (context, index) {
                             final foodLodge = filteredFoodAndLodges[index];
-                            return Container(
-                              padding: const EdgeInsets.all(16.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 30,
-                                      backgroundColor: Colors.grey[300],
-                                      backgroundImage:
-                                          foodLodge['profileImg'] != null
-                                              ? NetworkImage(
-                                                  foodLodge['profileImg'])
-                                              : null,
-                                      child: foodLodge['profileImg'] == null
-                                          ? const Icon(Icons.person,
-                                              size: 30, color: Colors.grey)
-                                          : null,
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    ElevatedButton(
-                                      onPressed: () {},
-                                      child: const Text("Book Now"),
-                                    ),
-                                    const SizedBox(height: 16.0),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text("Name: ${foodLodge['name']}",
-                                          style:
-                                              const TextStyle(fontSize: 16.0)),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                          "Description: ${foodLodge['description']}",
-                                          style:
-                                              const TextStyle(fontSize: 16.0)),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                          "Location: ${foodLodge['regionalLocation']}",
-                                          style:
-                                              const TextStyle(fontSize: 16.0)),
-                                    ),
-                                  ],
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) => FoodLodgeDetailScreen(
+                                        id: foodLodge['_id']),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 30,
+                                        backgroundColor: Colors.grey[300],
+                                        backgroundImage:
+                                            foodLodge['profileImg'] != null
+                                                ? NetworkImage(
+                                                    foodLodge['profileImg'])
+                                                : null,
+                                        child: foodLodge['profileImg'] == null
+                                            ? const Icon(Icons.person,
+                                                size: 30, color: Colors.grey)
+                                            : null,
+                                      ),
+                                      const SizedBox(height: 8.0),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            "Name: ${foodLodge['name']}",
+                                            style: const TextStyle(
+                                                fontSize: 16.0)),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            "Description: ${foodLodge['description']}",
+                                            style: const TextStyle(
+                                                fontSize: 16.0)),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                            "Location: ${foodLodge['regionalLocation']}",
+                                            style: const TextStyle(
+                                                fontSize: 16.0)),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );

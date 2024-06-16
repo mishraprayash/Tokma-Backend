@@ -75,8 +75,6 @@ class LocationServices {
             },
             body: jsonEncode(userData),
           );
-          print(
-              'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
         } else {
           log('Error: No token available');
         }
@@ -101,7 +99,7 @@ class LocationServices {
           'lat': position.latitude,
           'lon': position.longitude
         };
-        print("jsonEncode: $userData");
+
         DatabaseHelper dbHelper = DatabaseHelper();
         String? token = await dbHelper.getGuideSession();
         if (token != null) {
@@ -113,8 +111,6 @@ class LocationServices {
             },
             body: jsonEncode(userData),
           );
-          print(
-              'Latitude: ${position.latitude}, Longitude: ${position.longitude}');
         } else {
           log('Error: No token available');
         }

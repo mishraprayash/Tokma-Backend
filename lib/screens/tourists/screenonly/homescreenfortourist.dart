@@ -9,10 +9,10 @@ import 'package:yatri/screens/tourists/details/activitiesdetailscreen.dart';
 import 'package:yatri/screens/tourists/details/foodlodgedetailsscreen.dart';
 import 'package:yatri/screens/tourists/details/healthservicedetailscreen.dart';
 import 'package:yatri/screens/tourists/details/localguidedetailsscreen.dart';
-import 'package:yatri/screens/tourists/foodandlodgescreen.dart';
-import 'package:yatri/screens/tourists/healthservices.dart';
-import 'package:yatri/screens/tourists/localguidescreen.dart';
-import 'package:yatri/screens/tourists/recommendedactivitiesscreen.dart';
+import 'package:yatri/screens/tourists/screenonly/foodandlodgescreen.dart';
+import 'package:yatri/screens/tourists/screenonly/healthservices.dart';
+import 'package:yatri/screens/tourists/screenonly/localguidescreen.dart';
+import 'package:yatri/screens/tourists/screenonly/recommendedactivitiesscreen.dart';
 
 class HomeScreenForTourist extends StatefulWidget {
   const HomeScreenForTourist({super.key});
@@ -25,9 +25,9 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
   final LocationServices _locationServices = LocationServices();
   TextEditingController _searchController = TextEditingController();
 
-  List<String> nearbyPlaces = [];
+  List<Map<String, dynamic>> nearbyPlaces = [];
   List<Map<String, dynamic>> nearbyHealthServices = [];
-  List<String> recommendedActivities = [];
+  List<Map<String, dynamic>> recommendedActivities = [];
   List<Map<String, dynamic>> nearbyGuides = [];
   bool _isLoading = true;
   String errorMessage = '';
@@ -45,16 +45,12 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
     try {
       DatabaseHelper dbHelper = DatabaseHelper();
       String? token = await dbHelper.getSession();
-      print("Token: $token");
 
       if (token != null) {
         var response = await http.get(
           Uri.parse('https://tokma.onrender.com/api/tourist/services'),
           headers: {'Authorization': 'Bearer $token'},
         );
-        String responseBody = response.body;
-        print("Response status: ${response.statusCode}");
-        print("Response body: $responseBody");
 
         if (response.statusCode == 200) {
           final data = json.decode(response.body);
@@ -64,7 +60,11 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
                 List<Map<String, dynamic>>.from(data['nearbyGuides'] ?? []);
             nearbyHealthServices = List<Map<String, dynamic>>.from(
                 data['nearbyHealthService'] ?? []);
-            // Add your logic to fetch and map nearbyPlaces and recommendedActivities
+            recommendedActivities = List<Map<String, dynamic>>.from(
+                data['recommendedActivities'] ?? []);
+            nearbyPlaces = List<Map<String, dynamic>>.from(
+                data['nearbyFoodandLodge'] ?? []);
+
             _isLoading = false;
           });
         } else {
@@ -157,18 +157,6 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
                         const SizedBox(height: 16.0),
                       ],
                       buildSection(
-                        title: "Recommended Food & Lodge",
-                        items: nearbyPlaces,
-                        seeMoreCallback: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => FoodLodgeScreen(),
-                            ),
-                          );
-                        },
-                      ),
-                      buildSection(
                         title: "Nearby Health Services",
                         items: nearbyHealthServices,
                         seeMoreCallback: () {
@@ -182,17 +170,18 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
                         isHealthServiceSection: true,
                       ),
                       buildSection(
-                        title: "Recommended Activities",
-                        items: recommendedActivities,
+                        title: "Recommended Food & Lodge",
+                        items: nearbyPlaces,
                         seeMoreCallback: () {
                           Navigator.push(
                             context,
                             MaterialPageRoute(
-                              builder: (context) =>
-                                  RecommendedActivitiesScreen(),
+                              builder: (context) => FoodLodgeScreen(),
                             ),
                           );
                         },
+                        nearbyPlaces:
+                            true, // Add this parameter to indicate it's for Food & Lodge
                       ),
                       buildSection(
                         title: "Nearby Local Guides",
@@ -206,6 +195,19 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
                           );
                         },
                         isGuideSection: true,
+                      ),
+                      buildSection(
+                        title: "Recommended Activities",
+                        items: recommendedActivities,
+                        seeMoreCallback: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                              builder: (context) =>
+                                  RecommendedActivitiesScreen(),
+                            ),
+                          );
+                        },
                       ),
                     ],
                   ),
@@ -256,8 +258,8 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
     required VoidCallback seeMoreCallback,
     bool isHealthServiceSection = false,
     bool isGuideSection = false,
-    bool isActivities = false,
-    bool isFoodlodge = false,
+    bool isRecommendedSection = false,
+    bool nearbyPlaces = false,
   }) {
     return Padding(
       padding: const EdgeInsets.all(8.0),
@@ -283,7 +285,8 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => HealthServiceDetailScreen(),
+                          builder: (context) => HealthServiceDetailScreen(
+                              id: items[index]['_id'] ?? ''),
                         ),
                       );
                     } else if (isGuideSection) {
@@ -291,21 +294,25 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => LocalGuideDetailScreen(),
+                          builder: (context) => LocalGuideDetailScreen(
+                              id: items[index]['_id'] ?? ''),
                         ),
                       );
-                    } else if (isFoodlodge) {
+                    } else if (isRecommendedSection) {
+                      // Navigate to Food & Lodge Detail Screen
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => FoodLodgeDetailScreen(),
+                          builder: (context) => ActivitieDetailScreen(
+                              id: items[index]['_id'] ?? ''),
                         ),
                       );
-                    } else if (isActivities) {
+                    } else {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) => ActivitieDetailScreen(),
+                          builder: (context) => FoodLodgeDetailScreen(
+                              id: items[index]['_id'] ?? ''),
                         ),
                       );
                     }
@@ -340,8 +347,35 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
                                 decoration: BoxDecoration(
                                   borderRadius: BorderRadius.circular(8.0),
                                   image: DecorationImage(
-                                    image: NetworkImage(
-                                        items[index]['profileImg'] ?? ''),
+                                    image: items[index]['profileImg'] != null &&
+                                            items[index]['profileImg']
+                                                .isNotEmpty
+                                        ? NetworkImage(
+                                            items[index]['profileImg'])
+                                        : AssetImage('assets/default.png')
+                                            as ImageProvider,
+                                    fit: BoxFit.cover,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          if (nearbyPlaces)
+                            Padding(
+                              padding: const EdgeInsets.all(8.0),
+                              child: Container(
+                                width: double.infinity,
+                                height:
+                                    125.0, // Adjust the height as per your design
+                                decoration: BoxDecoration(
+                                  borderRadius: BorderRadius.circular(8.0),
+                                  image: DecorationImage(
+                                    image: items[index]['profileImg'] != null &&
+                                            items[index]['profileImg']
+                                                .isNotEmpty
+                                        ? NetworkImage(
+                                            items[index]['profileImg'])
+                                        : AssetImage('assets/default.png')
+                                            as ImageProvider,
                                     fit: BoxFit.cover,
                                   ),
                                 ),
@@ -351,11 +385,8 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
                             CircleAvatar(
                               radius: 30,
                               backgroundColor: Colors.grey[300],
-                              backgroundImage:
-                                  items[index]['profileImg'] != null
-                                      ? NetworkImage(items[index]['profileImg'])
-                                      : null,
-                              child: items[index]['profileImg'] == null
+                              child: items[index]['profileImg'] == null ||
+                                      items[index]['profileImg'].isEmpty
                                   ? Icon(Icons.person,
                                       size: 30, color: Colors.grey)
                                   : null,

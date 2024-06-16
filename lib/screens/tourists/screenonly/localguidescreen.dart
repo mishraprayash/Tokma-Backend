@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:yatri/Widget/sidemenulist.dart';
 import 'package:yatri/database/db_handler.dart';
 import 'package:yatri/main.dart';
+import 'package:yatri/screens/tourists/details/localguidedetailsscreen.dart';
 
 class HireGuideScreen extends StatefulWidget {
   const HireGuideScreen({super.key});
@@ -29,17 +30,15 @@ class _HireGuideScreenState extends State<HireGuideScreen> {
     try {
       DatabaseHelper dbHelper = DatabaseHelper();
       String? token = await dbHelper.getSession();
-      print("Token: $token");
 
       final response = await http.get(
         Uri.parse('https://tokma.onrender.com/api/tourist/nearby-guide'),
         headers: {'Authorization': 'Bearer $token'},
       );
 
-      print("Response status: ${response.statusCode}");
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print("Data: $data");
+
         setState(() {
           nearbyGuides = List<Map<String, dynamic>>.from(data['nearbyGuides']);
           filteredGuides =
@@ -179,52 +178,67 @@ class _HireGuideScreenState extends State<HireGuideScreen> {
                           itemCount: filteredGuides.length,
                           itemBuilder: (context, index) {
                             final guide = filteredGuides[index];
-                            return Container(
-                              padding: const EdgeInsets.all(16.0),
-                              decoration: BoxDecoration(
-                                color: Colors.white,
-                                border: Border.all(color: Colors.grey),
-                                borderRadius: BorderRadius.circular(8.0),
-                              ),
-                              child: SingleChildScrollView(
-                                child: Column(
-                                  children: [
-                                    CircleAvatar(
-                                      radius: 30,
-                                      backgroundColor: Colors.grey[300],
-                                      child: const Icon(Icons.person,
-                                          size: 30, color: Colors.grey),
-                                    ),
-                                    const SizedBox(height: 8.0),
-                                    Text(
-                                      "${guide['firstName']} ${guide['lastName']}",
-                                      style: const TextStyle(
-                                          fontSize: 16.0,
-                                          fontWeight: FontWeight.w600),
-                                    ),
-                                    const SizedBox(height: 16.0),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "Age: ${guide['age']}",
-                                        style: const TextStyle(fontSize: 16.0),
+                            return InkWell(
+                              onTap: () {
+                                Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                    builder: (context) =>
+                                        LocalGuideDetailScreen(
+                                            id: guide['_id']),
+                                  ),
+                                );
+                              },
+                              child: Container(
+                                padding: const EdgeInsets.all(16.0),
+                                decoration: BoxDecoration(
+                                  color: Colors.white,
+                                  border: Border.all(color: Colors.grey),
+                                  borderRadius: BorderRadius.circular(8.0),
+                                ),
+                                child: SingleChildScrollView(
+                                  child: Column(
+                                    children: [
+                                      CircleAvatar(
+                                        radius: 30,
+                                        backgroundColor: Colors.grey[300],
+                                        child: const Icon(Icons.person,
+                                            size: 30, color: Colors.grey),
                                       ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "Gender: ${guide['gender']}",
-                                        style: const TextStyle(fontSize: 16.0),
+                                      const SizedBox(height: 8.0),
+                                      Text(
+                                        "${guide['firstName']} ${guide['lastName']}",
+                                        style: const TextStyle(
+                                            fontSize: 16.0,
+                                            fontWeight: FontWeight.w600),
                                       ),
-                                    ),
-                                    Align(
-                                      alignment: Alignment.centerLeft,
-                                      child: Text(
-                                        "Contact Number: ${guide['contactNo']}",
-                                        style: const TextStyle(fontSize: 16.0),
+                                      const SizedBox(height: 16.0),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "Age: ${guide['age']}",
+                                          style:
+                                              const TextStyle(fontSize: 16.0),
+                                        ),
                                       ),
-                                    ),
-                                  ],
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "Gender: ${guide['gender']}",
+                                          style:
+                                              const TextStyle(fontSize: 16.0),
+                                        ),
+                                      ),
+                                      Align(
+                                        alignment: Alignment.centerLeft,
+                                        child: Text(
+                                          "Contact Number: ${guide['contactNo']}",
+                                          style:
+                                              const TextStyle(fontSize: 16.0),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
                                 ),
                               ),
                             );

@@ -1,16 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:yatri/screens/tourists/foodandlodgescreen.dart';
-import 'package:yatri/screens/tourists/healthservices.dart';
-import 'package:yatri/screens/tourists/localguidescreen.dart';
+import 'package:yatri/screens/tourists/screenonly/foodandlodgescreen.dart';
+import 'package:yatri/screens/tourists/screenonly/healthservices.dart';
+import 'package:yatri/screens/tourists/screenonly/localguidescreen.dart';
 import 'package:yatri/screens/local%20guide/homescreenforlocalguide.dart';
-import 'package:yatri/screens/tourists/homescreenfortourist.dart';
+import 'package:yatri/screens/tourists/screenonly/homescreenfortourist.dart';
 import 'package:yatri/screens/loginscreen.dart';
-import 'package:yatri/screens/tourists/profile.dart';
+import 'package:yatri/screens/tourists/screenonly/profile.dart';
 import 'package:yatri/screens/signupscreen.dart';
 import 'package:yatri/screens/splashscreen.dart';
-import 'package:yatri/screens/tourists/recommendedactivitiesscreen.dart';
-import 'package:yatri/screens/tourists/rulebookscreen.dart';
+import 'package:yatri/screens/tourists/screenonly/recommendedactivitiesscreen.dart';
+import 'package:yatri/screens/tourists/screenonly/rulebookscreen.dart';
 
 void main() {
   SystemChrome.setSystemUIOverlayStyle(
