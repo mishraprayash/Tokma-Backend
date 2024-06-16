@@ -184,6 +184,7 @@ export const updateLocation = async (req, res, next) => {
 export const fetchAllService = async (req, res, next) => {
   try {
     const touristDetails = await Tourist.findOne({ email: req.user.email })
+    console.log(touristDetails)
     const touristLocation = touristDetails.geoLocation;
     console.log(touristLocation);
     const nearbyGuides = await Guide.find({
@@ -227,7 +228,7 @@ export const fetchAllService = async (req, res, next) => {
       nearbyFoodandLodge
     })
   } catch (error) {
-    res.status(400).json({ error });
+    res.status(400).json({ error:error.message });
   }
 }
 export const fetchRules = async (req, res, next) => {

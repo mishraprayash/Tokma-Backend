@@ -156,7 +156,7 @@ export const approvefoodandlodge = async (req, res, next) => {
     }
 }
 
-// reject health service
+
 export const rejectfoodandlodge = async (req, res, next) => {
     try {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
