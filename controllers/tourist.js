@@ -91,7 +91,7 @@ export const nearbyHealthServices = async (req, res, next) => {
             type: "Point",
             coordinates: locat.coordinates,
           },
-          $maxDistance: 1000, //1000 m =1km
+          $maxDistance: 10000000, //1000 m =1km
         },
       },
       //  isApproved: true, isAvailable: true
@@ -116,7 +116,7 @@ export const nearbyLocalGuides = async (req, res, next) => {
             type: "Point",
             coordinates: locat.coordinates,
           },
-          $maxDistance: 1000, //1000 m =1km
+          $maxDistance: 10000000, //1000 m =1km
         },
       },
       // isApproved: true, isAvailable: true 
@@ -141,7 +141,7 @@ export const nearbyFoodandLodge = async (req, res, next) => {
             type: "Point",
             coordinates: locat.coordinates,
           },
-          $maxDistance: 1000, //1000 m =1km
+          $maxDistance: 10000000, //1000 m =1km
         },
       },
     })
@@ -193,7 +193,7 @@ export const fetchAllService = async (req, res, next) => {
             type: "Point",
             coordinates: touristLocation.coordinates,
           },
-          $maxDistance: 1000, //1000 m =1km
+          $maxDistance: 10000000, //1000 m =1km
         },
       },
       // isApproved: true, isAvailable: true
@@ -205,7 +205,7 @@ export const fetchAllService = async (req, res, next) => {
             type: "Point",
             coordinates: touristLocation.coordinates,
           },
-          $maxDistance: 1000, //1000 m =1km
+          $maxDistance: 10000000, //1000 m =1km
         },
       },
       // isApproved: true, isAvailable: true
@@ -218,7 +218,7 @@ export const fetchAllService = async (req, res, next) => {
             type: "Point",
             coordinates: touristLocation.coordinates,
           },
-          $maxDistance: 1000, //1000 m =1km
+          $maxDistance: 10000000, //1000 m =1km
         },
       },
     }).limit(3)
