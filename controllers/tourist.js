@@ -202,7 +202,7 @@ export const fetchRules = async (req, res, next) => {
     if(!name){
       return res.status(400).json({message:"No name provided"})
     }
-    const ruleFetch = await rule.find({ name: new RegExp(name, 'i') });
+    const ruleFetch = await rule.find({ name: new RegExp(`^${name}`, 'i') });
     res.status(200).json({ message: "success", data: ruleFetch });
   }
   catch (error) {
