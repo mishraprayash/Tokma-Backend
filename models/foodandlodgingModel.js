@@ -1,6 +1,7 @@
 import mongoose from "mongoose";
 import bcrypt from "bcryptjs"
 import jwt from "jsonwebtoken"
+import { type } from "os";
 
 const foodAndLodgingSchema = new mongoose.Schema({
     name: {
@@ -37,6 +38,10 @@ const foodAndLodgingSchema = new mongoose.Schema({
     description: {
         type: String,
         required: true
+    },
+    country:{
+        type:String,
+        required:true
     },
     geoLocation: {
         type: {
