@@ -32,7 +32,7 @@ app.use('/api/guide', guideRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/tourist', touristRoutes);
 app.use('/api/healthservice', healthServiceRoutes)
-app.use('/api/foodandlodging',foodandlodgingRoutes)
+app.use('/api/foodandlodge',foodandlodgingRoutes)
 
 const PORT = process.env.PORT || 3001
 
