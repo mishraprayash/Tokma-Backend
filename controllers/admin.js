@@ -6,6 +6,7 @@ import mongoose from "mongoose"
 import healthService from "../models/healthserviceModel.js"
 import rule from "../models/rulebook.js"
 import foodAndLodging from "../models/foodandlodgingModel.js"
+
 // register 
 export const register = async (req, res, next) => {
     try {
@@ -127,13 +128,53 @@ export const rejectHealthService = async (req, res, next) => {
         if (!healthServ) {
             return res.status(400).json({ message: "User doesnot exists" })
         }
-        await healthServ.deleteOne(id);
+        await healthServ.deleteOne({ _id: id });
         return res.status(200).json({ message: 'Service Rejected' })
     } catch (error) {
         console.log(error);
         return res.status(500).json({ error });
     }
 }
+
+
+export const approvefoodandlodge = async (req, res, next) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: "Invalid ID format" });
+        }
+        const id = new mongoose.Types.ObjectId(req.params.id);
+        const foodandlodgeservice = await foodAndLodging.findById(id);
+        if (!foodandlodgeservice) {
+            return res.status(400).json({ message: "Service doesnot exists" })
+        }
+        foodandlodgeservice.isApproved = true
+        await foodandlodgeservice.save()
+        return res.status(200).json({ message: 'Service Approved' })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error });
+    }
+}
+
+// reject health service
+export const rejectfoodandlodge = async (req, res, next) => {
+    try {
+        if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
+            return res.status(400).json({ message: "Invalid ID format" });
+        }
+        const id = new mongoose.Types.ObjectId(id);
+        const foodandlodgeservice = await healthService.findById(id);
+        if (!foodandlodgeservice) {
+            return res.status(400).json({ message: "User doesnot exists" })
+        }
+        await foodandlodgeservice.deleteOne({ _id: id });
+        return res.status(200).json({ message: 'Service Rejected' })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ error });
+    }
+}
+
 
 // fetchDashboardInfo for admin
 export const fetchDashboardInfo = async (req, res, next) => {
@@ -146,7 +187,7 @@ export const fetchDashboardInfo = async (req, res, next) => {
         return res.status(200).json({
             guides: pendingGuides,
             healthService: pendingHealthService,
-            foodandlodge:foodandlodgeService,
+            foodandlodge: foodandlodgeService,
             guideCount,
             touristCount,
             totalCount: guideCount + touristCount
