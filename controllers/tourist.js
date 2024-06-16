@@ -176,8 +176,8 @@ export const updateLocation = async (req, res, next) => {
     await touristDetails.save();
 
     res.status(201).json({ messege: "Location Updated" });
-  } catch (err) {
-    res.status(400).json({ err: err.message });
+  } catch (error) {
+    res.status(400).json({ error });
   }
 };
 
@@ -227,7 +227,7 @@ export const fetchAllService = async (req, res, next) => {
       nearbyGuides, nearbyHealthService, nearbyFoodandLodge
     })
   } catch (error) {
-    res.status(400).json({ err: err.message });
+    res.status(400).json({ error });
   }
 }
 export const fetchRules = async (req, res, next) => {
@@ -240,6 +240,6 @@ export const fetchRules = async (req, res, next) => {
     res.status(200).json({ message: "success", data: ruleFetch });
   }
   catch (error) {
-    res.status(400).json({ err: err.message });
+    res.status(400).json({ error });
   }
 }
