@@ -11,7 +11,8 @@ export const register = async (req, res, next) => {
       description,
       password,
       lat,
-      lon
+      lon,
+      profileImg
     } = req.body;
     if (
       !name ||
@@ -36,7 +37,8 @@ export const register = async (req, res, next) => {
       contactNo,
       country,
       description,
-      password: hashedPassword
+      password: hashedPassword,
+      profileImg
     });
     foodandlodging.geoLocation.type = "Point"
     foodandlodging.geoLocation.coordinates = [lon, lat]

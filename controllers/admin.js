@@ -26,7 +26,7 @@ export const register = async (req, res, next) => {
         return res.status(201).json({ message: 'Register Sucess', admin })
     } catch (error) {
         console.log(error);
-        res.status(500).json({ error })
+        res.status(500).json({ error:error.message })
     }
 }
 
@@ -52,7 +52,8 @@ export const login = async (req, res, next) => {
 
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ error })
+        res.status(500).json({ error:error.message })
+
     }
 }
 
@@ -73,7 +74,8 @@ export const approveGuide = async (req, res, next) => {
 
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ error })
+        res.status(500).json({ error:error.message })
+
     }
 
 }
@@ -92,7 +94,8 @@ export const rejectGuide = async (req, res, next) => {
         return res.status(200).json({ message: 'Guide Rejected' });
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ message: 'Server error' });
+        res.status(500).json({ error:error.message })
+
     }
 };
 
@@ -113,7 +116,8 @@ export const approveHealthService = async (req, res, next) => {
         return res.status(200).json({ message: 'Service Approved' })
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ error });
+        res.status(500).json({ error:error.message })
+
     }
 }
 
@@ -132,7 +136,8 @@ export const rejectHealthService = async (req, res, next) => {
         return res.status(200).json({ message: 'Service Rejected' })
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ error });
+        res.status(500).json({ error:error.message })
+
     }
 }
 
@@ -152,7 +157,8 @@ export const approvefoodandlodge = async (req, res, next) => {
         return res.status(200).json({ message: 'Service Approved' })
     } catch (error) {
         console.log(error);
-        return res.status(500).json({ error });
+        res.status(500).json({ error:error.message })
+
     }
 }
 

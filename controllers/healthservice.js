@@ -2,8 +2,8 @@ import healthService from "../models/healthserviceModel.js"
 import bcrypt from "bcryptjs"
 export const register = async (req, res, next) => {
     try {
-        const { name, contactNo, email, password, description, location } = req.body
-        if (!name || !contactNo || !email || !password || !description || !location) {
+        const { name, contactNo, email, password, description, location, profileImg } = req.body
+        if (!name || !contactNo || !email || !password || !description || !location ) {
             return res.status(400).json({ message: "Missing informations" })
         }
         const user = await healthService.findOne({ email })
@@ -15,6 +15,7 @@ export const register = async (req, res, next) => {
         const healthservice = new healthService({
             name, contactNo, email, description, regionalLocation: location,
             password: hashedPassword,
+            profileImg
         })
         await healthservice.save()
         return res.json({ message: "Register Success", healthservice })
