@@ -40,9 +40,11 @@ const healthServiceSchema = new mongoose.Schema({
         type: {
             type: String,
             enum: ["Point"],
-        },
-        coordinates: {
+            default:'Point'
+        },        
+        coordinates:{
             type: [Number],
+            default:[0,0]
         }
     },
     regionalLocation: {

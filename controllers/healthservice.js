@@ -51,6 +51,7 @@ export const login = async (req, res, next) => {
 export const fetchDashboardInfo = async (req, res, next) => {
     try {
         const healthservice = await healthService.find({ _id: req.user.id }, { password: false })
+        console.log(healthservice)
         if (!healthservice) {
             return res.status(400).json({ message: "Service doesnot exists" })
         }

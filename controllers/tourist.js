@@ -181,7 +181,6 @@ export const updateLocation = async (req, res, next) => {
   }
 };
 
-
 export const fetchAllService = async (req, res, next) => {
   try {
     const touristDetails = await Tourist.findOne({ email: req.user.email })
@@ -224,7 +223,8 @@ export const fetchAllService = async (req, res, next) => {
       },
     }).limit(3)
     return res.status(200).json({
-      nearbyGuides, nearbyHealthService, nearbyFoodandLodge
+      nearbyGuides, nearbyHealthService, 
+      nearbyFoodandLodge
     })
   } catch (error) {
     res.status(400).json({ error });
