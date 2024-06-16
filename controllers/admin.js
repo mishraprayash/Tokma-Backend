@@ -5,6 +5,7 @@ import Tourist from "../models/touristModel.js"
 import mongoose from "mongoose"
 import healthService from "../models/healthserviceModel.js"
 import rule from "../models/rulebook.js"
+import foodAndLodging from "../models/foodandlodgingModel.js"
 // register 
 export const register = async (req, res, next) => {
     try {
@@ -141,9 +142,11 @@ export const fetchDashboardInfo = async (req, res, next) => {
         const guideCount = await Guide.countDocuments({ isApproved: true })
         const touristCount = await Tourist.countDocuments()
         const pendingHealthService = await healthService.find({ isApproved: false }, { password: false })
+        const foodandlodgeService = await foodAndLodging.find({ isApproved: false }, { password: false })
         return res.status(200).json({
             guides: pendingGuides,
             healthService: pendingHealthService,
+            foodandlodge:foodandlodgeService,
             guideCount,
             touristCount,
             totalCount: guideCount + touristCount
