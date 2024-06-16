@@ -163,7 +163,7 @@ export const rejectfoodandlodge = async (req, res, next) => {
             return res.status(400).json({ message: "Invalid ID format" });
         }
         const id = new mongoose.Types.ObjectId(req.params.id);
-        const foodandlodgeservice = await healthService.findById(id);
+        const foodandlodgeservice = await foodAndLodging.findById(id);
         if (!foodandlodgeservice) {
             return res.status(400).json({ message: "Service doesnot exists" })
         }
