@@ -134,7 +134,7 @@ export const nearbyFoodandLodge = async (req, res, next) => {
     const touristDetails = await Tourist.findOne({ email });
     const locat = touristDetails.geoLocation;
 
-    const nearbyFoodandLodge = await foodAndLodging.find({
+    const nearbyfoodandlodge = await foodAndLodging.find({
       geoLocation: {
         $near: {
           $geometry: {
@@ -145,7 +145,7 @@ export const nearbyFoodandLodge = async (req, res, next) => {
         },
       },
     })
-    return res.status(200).json({ message: "Results", nearbyFoodandLodge });
+    return res.status(200).json({ message: "Results", nearbyfoodandlodge });
   } catch (error) {
     console.log(error);
     res.status(500).json({ error });

@@ -49,7 +49,7 @@ const foodAndLodgingSchema = new mongoose.Schema({
     }
 })
 
-foodAndLodgingSchema.index({ geoLocation: '2dsphere' })
+foodAndLodgingSchema.index({geoLocation:'2dsphere'})
 
 foodAndLodgingSchema.methods.createJWT = function () {
     return jwt.sign(

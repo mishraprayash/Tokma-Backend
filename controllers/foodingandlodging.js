@@ -30,19 +30,16 @@ export const register = async (req, res, next) => {
       return res.status(400).json({ message: "User already exists" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const foodandlodging = new foodAndLodging ({
+    const foodandlodging = await foodAndLodging.create({
       name,
       email,
       contactNo,
       country,
       description,
-      password: hashedPassword,
-      geoLocation:{
-        type:'Point',
-        coordinates:[lon,lat]
-      }
-
+      password: hashedPassword
     });
+    foodandlodging.geoLocation.type = "Point"
+    foodandlodging.geoLocation.coordinates = [lon, lat]
     await foodandlodging.save()
     return res.status(200).json({ message: "Registered Successfully" });
   } catch (error) {
@@ -103,14 +100,14 @@ export const updateAvailability = async (req, res, next) => {
 // tourist will call this api
 export const fetchIndividualServiceFromTourist = async (req, res, next) => {
   try {
-      const { id } = req.body
-      const foodandlodging = await foodAndLodging.findOne({ _id: id }, { password: false })
-      if (!foodandlodging) {
-          return res.status(400).json({ message: "Service doesnot exists" })
-      }
-      return res.status(200).json({ foodandlodging })
+    const { id } = req.body
+    const foodandlodging = await foodAndLodging.findOne({ _id: id }, { password: false })
+    if (!foodandlodging) {
+      return res.status(400).json({ message: "Service doesnot exists" })
+    }
+    return res.status(200).json({ foodandlodging })
   } catch (error) {
-      console.log(error)
-      return res.status(500).json({ error: error.message })
+    console.log(error)
+    return res.status(500).json({ error: error.message })
   }
 }
