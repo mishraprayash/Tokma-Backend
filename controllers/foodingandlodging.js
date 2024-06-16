@@ -10,7 +10,8 @@ export const register = async (req, res, next) => {
       country,
       description,
       password,
-      location
+      lat,
+      lon
     } = req.body;
     if (
       !name ||
@@ -19,7 +20,8 @@ export const register = async (req, res, next) => {
       !country ||
       !description ||
       !password ||
-      !location
+      !lat ||
+      !lon
     ) {
       return res.status(400).json({ message: "Missing informations" });
     }
@@ -28,15 +30,20 @@ export const register = async (req, res, next) => {
       return res.status(400).json({ message: "User already exists" });
     }
     const hashedPassword = await bcrypt.hash(password, 10);
-    const foodandlodging = await foodAndLodging.create({
+    const foodandlodging = new foodAndLodging ({
       name,
       email,
       contactNo,
       country,
       description,
       password: hashedPassword,
-      regionalLocation: location
+      geoLocation:{
+        type:'Point',
+        coordinates:[lon,lat]
+      }
+
     });
+    await foodandlodging.save()
     return res.status(200).json({ message: "Registered Successfully" });
   } catch (error) {
     console.log(error);
@@ -60,10 +67,6 @@ export const login = async (req, res, next) => {
     }
     const token = foodandlodging.createJWT();
 
-    res.cookie("token", token, {
-      httpOnly: true,
-      maxAge: 24 * 60 * 60 * 100,
-    });
     return res.status(200).json({ message: "Login Success", token });
   } catch (error) {
     console.log(error);
@@ -94,5 +97,20 @@ export const updateAvailability = async (req, res, next) => {
   } catch (error) {
     console.log(error);
     return res.status(500).json({ error })
+  }
+}
+
+// tourist will call this api
+export const fetchIndividualServiceFromTourist = async (req, res, next) => {
+  try {
+      const { id } = req.body
+      const foodandlodging = await foodAndLodging.findOne({ _id: id }, { password: false })
+      if (!foodandlodging) {
+          return res.status(400).json({ message: "Service doesnot exists" })
+      }
+      return res.status(200).json({ foodandlodging })
+  } catch (error) {
+      console.log(error)
+      return res.status(500).json({ error: error.message })
   }
 }

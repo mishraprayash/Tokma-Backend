@@ -3,6 +3,7 @@ import bcrypt from "bcryptjs";
 import healthService from "../models/healthserviceModel.js";
 import Guide from "../models/guideModel.js";
 import rule from "../models/rulebook.js";
+import foodAndLodging from "../models/foodandlodgingModel.js";
 export const register = async (req, res, next) => {
   try {
     const {
@@ -78,7 +79,6 @@ export const login = async (req, res, next) => {
 };
 
 export const nearbyHealthServices = async (req, res, next) => {
-
   try {
     const email = req.user.email;
     const touristDetails = await Tourist.findOne({ email });
@@ -108,7 +108,7 @@ export const nearbyLocalGuides = async (req, res, next) => {
     const email = req.user.email;
     const touristDetails = await Tourist.findOne({ email });
     const locat = touristDetails.geoLocation;
-    console.log(locat);
+
     const nearbyGuides = await Guide.find({
       geoLocation: {
         $near: {
@@ -118,7 +118,7 @@ export const nearbyLocalGuides = async (req, res, next) => {
           },
           $maxDistance: 1000, //1000 m =1km
         },
-      }, 
+      },
       // isApproved: true, isAvailable: true 
     });
     return res.status(200).json({ message: "Results", nearbyGuides });
@@ -127,6 +127,30 @@ export const nearbyLocalGuides = async (req, res, next) => {
     res.status(500).json({ error });
   }
 };
+
+export const nearbyFoodandLodge = async (req, res, next) => {
+  try {
+    const email = req.user.email;
+    const touristDetails = await Tourist.findOne({ email });
+    const locat = touristDetails.geoLocation;
+
+    const nearbyFoodandLodge = await foodAndLodging.find({
+      geoLocation: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: locat.coordinates,
+          },
+          $maxDistance: 1000, //1000 m =1km
+        },
+      },
+    })
+    return res.status(200).json({ message: "Results", nearbyFoodandLodge });
+  } catch (error) {
+    console.log(error);
+    res.status(500).json({ error });
+  }
+}
 
 export const touristInfo = async (req, res, next) => {
   try {
@@ -160,7 +184,6 @@ export const updateLocation = async (req, res, next) => {
 
 export const fetchAllService = async (req, res, next) => {
   try {
-    const email = req.user.email;
     const touristDetails = await Tourist.findOne({ email: req.user.email })
     const touristLocation = touristDetails.geoLocation;
     console.log(touristLocation);
@@ -185,12 +208,23 @@ export const fetchAllService = async (req, res, next) => {
           },
           $maxDistance: 1000, //1000 m =1km
         },
-      }, 
+      },
       // isApproved: true, isAvailable: true
-    }).limit(3);
+    }).limit(3)
 
+    const nearbyFoodandLodge = await foodAndLodging.find({
+      geoLocation: {
+        $near: {
+          $geometry: {
+            type: "Point",
+            coordinates: touristLocation.coordinates,
+          },
+          $maxDistance: 1000, //1000 m =1km
+        },
+      },
+    }).limit(3)
     return res.status(200).json({
-      nearbyGuides, nearbyHealthService
+      nearbyGuides, nearbyHealthService, nearbyFoodandLodge
     })
   } catch (error) {
     res.status(400).json({ err: err.message });
@@ -199,8 +233,8 @@ export const fetchAllService = async (req, res, next) => {
 export const fetchRules = async (req, res, next) => {
   try {
     const { name } = req.body;
-    if(!name){
-      return res.status(400).json({message:"No name provided"})
+    if (!name) {
+      return res.status(400).json({ message: "No name provided" })
     }
     const ruleFetch = await rule.find({ name: new RegExp(`^${name}`, 'i') });
     res.status(200).json({ message: "success", data: ruleFetch });
