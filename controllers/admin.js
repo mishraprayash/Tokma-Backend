@@ -123,7 +123,7 @@ export const rejectHealthService = async (req, res, next) => {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
             return res.status(400).json({ message: "Invalid ID format" });
         }
-        const id = new mongoose.Types.ObjectId(id);
+        const id = new mongoose.Types.ObjectId(req.params.id);
         const healthServ = await healthService.findById(id);
         if (!healthServ) {
             return res.status(400).json({ message: "User doesnot exists" })
@@ -162,10 +162,10 @@ export const rejectfoodandlodge = async (req, res, next) => {
         if (!mongoose.Types.ObjectId.isValid(req.params.id)) {
             return res.status(400).json({ message: "Invalid ID format" });
         }
-        const id = new mongoose.Types.ObjectId(id);
+        const id = new mongoose.Types.ObjectId(req.params.id);
         const foodandlodgeservice = await healthService.findById(id);
         if (!foodandlodgeservice) {
-            return res.status(400).json({ message: "User doesnot exists" })
+            return res.status(400).json({ message: "Service doesnot exists" })
         }
         await foodandlodgeservice.deleteOne({ _id: id });
         return res.status(200).json({ message: 'Service Rejected' })
