@@ -69,6 +69,7 @@ class _HomeScreenForLocalGuideState extends State<HomeScreenForLocalGuide> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        automaticallyImplyLeading: false,
         title: const Text('Local Guide Profile',
             style: TextStyle(color: Colors.white)),
         iconTheme: const IconThemeData(color: Colors.white),

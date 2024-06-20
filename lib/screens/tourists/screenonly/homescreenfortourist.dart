@@ -333,76 +333,80 @@ class _HomeScreenForTouristState extends State<HomeScreenForTourist> {
                         ],
                         borderRadius: BorderRadius.circular(8.0),
                       ),
-                      child: Column(
-                        crossAxisAlignment: CrossAxisAlignment.center,
-                        mainAxisAlignment: MainAxisAlignment.center,
-                        children: [
-                          if (isHealthServiceSection)
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                width: double.infinity,
-                                height:
-                                    125.0, // Adjust the height as per your design
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  image: DecorationImage(
-                                    image: items[index]['profileImg'] != null &&
-                                            items[index]['profileImg']
-                                                .isNotEmpty
-                                        ? NetworkImage(
-                                            items[index]['profileImg'])
-                                        : AssetImage('assets/default.png')
-                                            as ImageProvider,
-                                    fit: BoxFit.cover,
+                      child: SingleChildScrollView(
+                        child: Column(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            if (isHealthServiceSection)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  height:
+                                      125.0, // Adjust the height as per your design
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    image: DecorationImage(
+                                      image:
+                                          items[index]['profileImg'] != null &&
+                                                  items[index]['profileImg']
+                                                      .isNotEmpty
+                                              ? NetworkImage(
+                                                  items[index]['profileImg'])
+                                              : AssetImage('assets/default.png')
+                                                  as ImageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),
-                            ),
-                          if (nearbyPlaces)
-                            Padding(
-                              padding: const EdgeInsets.all(8.0),
-                              child: Container(
-                                width: double.infinity,
-                                height:
-                                    125.0, // Adjust the height as per your design
-                                decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(8.0),
-                                  image: DecorationImage(
-                                    image: items[index]['profileImg'] != null &&
-                                            items[index]['profileImg']
-                                                .isNotEmpty
-                                        ? NetworkImage(
-                                            items[index]['profileImg'])
-                                        : AssetImage('assets/default.png')
-                                            as ImageProvider,
-                                    fit: BoxFit.cover,
+                            if (nearbyPlaces)
+                              Padding(
+                                padding: const EdgeInsets.all(8.0),
+                                child: Container(
+                                  width: double.infinity,
+                                  height:
+                                      125.0, // Adjust the height as per your design
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(8.0),
+                                    image: DecorationImage(
+                                      image:
+                                          items[index]['profileImg'] != null &&
+                                                  items[index]['profileImg']
+                                                      .isNotEmpty
+                                              ? NetworkImage(
+                                                  items[index]['profileImg'])
+                                              : AssetImage('assets/default.png')
+                                                  as ImageProvider,
+                                      fit: BoxFit.cover,
+                                    ),
                                   ),
                                 ),
                               ),
+                            if (isGuideSection)
+                              CircleAvatar(
+                                radius: 30,
+                                backgroundColor: Colors.grey[300],
+                                child: items[index]['profileImg'] == null ||
+                                        items[index]['profileImg'].isEmpty
+                                    ? Icon(Icons.person,
+                                        size: 30, color: Colors.grey)
+                                    : null,
+                              ),
+                            const SizedBox(height: 8.0),
+                            Text(
+                              isGuideSection
+                                  ? "${items[index]['firstName']} ${items[index]['lastName']}"
+                                  : items[index]['name'] ?? '',
+                              style: TextStyle(
+                                fontSize: 12.0,
+                                fontWeight: FontWeight.bold,
+                              ),
+                              textAlign: TextAlign.center,
                             ),
-                          if (isGuideSection)
-                            CircleAvatar(
-                              radius: 30,
-                              backgroundColor: Colors.grey[300],
-                              child: items[index]['profileImg'] == null ||
-                                      items[index]['profileImg'].isEmpty
-                                  ? Icon(Icons.person,
-                                      size: 30, color: Colors.grey)
-                                  : null,
-                            ),
-                          const SizedBox(height: 8.0),
-                          Text(
-                            isGuideSection
-                                ? "${items[index]['firstName']} ${items[index]['lastName']}"
-                                : items[index]['name'] ?? '',
-                            style: TextStyle(
-                              fontSize: 12.0,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ],
+                          ],
+                        ),
                       ),
                     ),
                   ),
